@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/header.css">
+    <title>BASE</title>
+    <script src="main.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<header>
+    <div>
+        <div class="topBar">
+            <ul class="barItem">
+                <li><a href="/">Home</a></li>
+                <li><a href="/create_acc">Create Acc</a></li>
+                <li><a href="/create_products">Add Products</a></li>
+                <li><a href="/edit"> Edit Products </a></li>
+                <li><a href="/delete_product">Delete Products</a></li>
+                <li><a href="/my_account"> My Account</a></li>
+            </ul>
+        </div>
+
+        <div class="formSction bearItem">
+            <form class="barItem" action="/login" method="post">
+                <input type="text" name="username" value="" placeholder="username" required>
+                <input type="password" name="password" value="" placeholder="password" required>
+                <input type="submit" name="loginButton" value="LOGIN">
+            </form>
+            <button class="barItem input" action = '/signout' style="margin-left:10px;">
+                <a href="">Sign Out</a>
+            </button>
+
+        </div>
+    </div>
+</header>
+
+
+{% block body %}
+
+{% endblock %}
+
+<footer class="footer">
+    <div class="footer__addr">
+        <h1 class="footer__logo">A very cool looking footer!</h1>
+
+        <h2>Contact</h2>
+
+        <address>
+            5534 Somewhere In. The World 22193-10212<br>
+
+            <a class="footer__btn" href="mailto:example@gmail.com">Email Us</a>
+        </address>
+    </div>
+
+    <ul class="footer__nav">
+        <li class="nav__item">
+            <h2 class="nav__title">Media</h2>
+
+            <ul class="nav__ul">
+                <li>
+                    <a href="#">Online</a>
+                </li>
+
+                <li>
+                    <a href="#">Print</a>
+                </li>
+
+                <li>
+                    <a href="#">Alternative Ads</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav__item nav__item--extra">
+            <h2 class="nav__title">Technology</h2>
+
+            <ul class="nav__ul nav__ul--extra">
+                <li>
+                    <a href="#">Hardware Design</a>
+                </li>
+
+                <li>
+                    <a href="#">Software Design</a>
+                </li>
+
+                <li>
+                    <a href="#">Digital Signage</a>
+                </li>
+
+                <li>
+                    <a href="#">Automation</a>
+                </li>
+
+                <li>
+                    <a href="#">Artificial Intelligence</a>
+                </li>
+
+                <li>
+                    <a href="#">IoT</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav__item">
+            <h2 class="nav__title">Legal</h2>
+
+            <ul class="nav__ul">
+                <li>
+                    <a href="#">Privacy Policy</a>
+                </li>
+
+                <li>
+                    <a href="#">Terms of Use</a>
+                </li>
+
+                <li>
+                    <a href="#">Sitemap</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="legal">
+        <p>&copy; 2019 Something. All rights reserved.</p>
+
+        <div class="legal__links">
+            <span>Made with <span class="heart">?</span> remotely from Anywhere</span>
+        </div>
+    </div>
+</footer>
+<script>
+    
+
+function login() {
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("pass").value;
+
+    if (localStorage.getItem(email)) {
+        if (pass == localStorage.getItem(email)) {
+            location.replace("menu.html");
+            alert("Login Successful");
+        } else if (pass == "") {
+            alert("Login Failed please enter your password");
+        }
+    } else if (email == "") {
+        alert("Login Failed please enter your email");
+    } else if (localStorage.getItem(email) == null || pass == "") {
+        alert("Login Failed Unknown credential combination");
+    }
+}
+</script>
+</body>
+</html>

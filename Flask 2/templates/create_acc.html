@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>This is the register page</h1>
+<div class="body">
+    <form action="/create_acc" method="POST">
+        <input type="text" name="first" placeholder="first_name" class="input_field"> <br>
+        <input type="text" name="last" placeholder="last_name" class="input_field"> <br>
+        <input type="text" name="username" placeholder="username" class="input_field"> <br>
+        <input type="text" name="password" placeholder="password" class="input_field"> <br>
+        <input type="text" name="email" placeholder="email" class="input_field"> <br>
+        <input type="text" name="type" placeholder="type" class="input_field"> <br>
+        <input type="submit" value="Submit" class="input_submit">
+    </form>
+</div>
+<script>
+function signUp() {
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("pass").value;
+
+    if (email == "" || pass == "") {
+        alert("Please fill the forms");
+    } else {
+        localStorage.setItem('name', name); 
+        localStorage.setItem(email, pass);
+        alert("Account Created");
+        location.replace("login.html");
+    }
+}
+</script>
+
+{% endblock %}

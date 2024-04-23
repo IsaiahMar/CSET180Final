@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <h1>This is the create product page</h1>
+    <div class="body">
+        <form action="/create_products" method="POST">
+            <input type="text" name="title" placeholder="title" class="input_field"> <br>
+            <input type="text" name="description" placeholder="description" class="input_field"> <br>
+            <input type="text" name="images" placeholder="images" class="input_field"> <br>
+            <input type="text" name="warranty_period" placeholder="warranty_period" class="input_field"> <br>
+            <input type="text" name="category" placeholder="category" class="input_field"> <br>
+            <input type="text" name="colors" placeholder="colors" class="input_field"> <br>
+            <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
+            <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
+            <input type="submit" value="Submit" class="input_submit">
+        </form>
+    </div>
+{% endblock %}
