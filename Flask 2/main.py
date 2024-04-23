@@ -11,7 +11,7 @@ app.secret_key = 'secret key'
 
 
 # Home page
-@app.route('/')
+@app.route('/', methods=['GET'])
 def homepage():
     return render_template('base.html')
 
@@ -19,11 +19,11 @@ def homepage():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        account = conn.execute(text("SELECT * FROM account WHERE username = :username"), {'username': username})
+        username = request.form.get('username')
+        password = request.form.get('password')
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\'"))
         user_data = account.fetchone()
-        
+        print(user_data)
         if user_data:
             if username == "Admin":
                 session['loggedin'] = True
@@ -39,48 +39,46 @@ def login():
                 session['Name'] = f"{user_data.first} {user_data.last}"
                 msg = 'Login success!'
                 print(session)
-                return redirect(url_for('login'))
+                print(username)
+                return redirect(url_for('my_account_page'))
             else:
                 msg = 'Wrong username or password'
         else:
             msg = 'User does not exist'
         
-        return render_template('my_account.html', msg=msg)
-
+        return url_for('homepage', msg=msg)
     return render_template('my_account.html')
 
 #button in heading
-@app.route('/signout', methods = ['GET', 'POST'])
+@app.route('/signout', methods = ['POST'])
 def logout():
-    if request.method == 'POST':
-        session.clear()
-        return redirect(url_for('login'))
+    session.clear()
+    return redirect(url_for('homepage'))
 
 #accounts page
 @app.route('/my_account', methods= ['get', 'post'])
 def my_account_page():
-    if 'username' in session:
-        return render_template('my_account.html', username = session['username'])
+    if 'Username' in session:
+        return render_template('my_account.html', username = session['Username'])
     else:
         return redirect(url_for('login'))
     
-
+@app.route('/create_acc', methods=['GET'])
+def show_newacc():
+    return render_template('create_acc.html')
 #create/ register account 
-@app.route('/create_acc', methods=['GET', 'POST'])
+@app.route('/create_acc', methods=['POST'])
 def create_account():
-    if request.method == 'POST':
-        first = request.form.get('first')
-        last = request.form.get('last')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
-        conn.execute(text(
+    first = request.form.get('first')
+    last = request.form.get('last')
+    username = request.form.get('username')
+    password = request.form.get('password')
+    email = request.form.get('email')
+    conn.execute(text(
             'INSERT INTO account (first, last, username, password, email) VALUES (:first, :last, :username, :password, :email)'),
                      {'first': first, 'last': last, 'username': username, 'password': password , 'email': email})
-        conn.commit()
-        return render_template("create_acc.html")
-    else:
-        return render_template('create_acc.html')
+    conn.commit()
+    return url_for("show_newacc")
 
 
 #Create Prodcuts
