@@ -21,8 +21,10 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\'"))
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\' or email = \'{username}\' "))
         user_data = account.fetchone()
+        session['type'] = user_data.type
+
         
         if user_data:
             if username == "Admin":
@@ -46,12 +48,13 @@ def login():
         return url_for('homepage', msg=msg)
     return render_template('my_account.html')
 
+
 #button in heading
 @app.route('/signout', methods = ['GET', 'POST'])
 def logout():
     if request.method == 'POST':
         session.clear()
-        return redirect(url_for('login'))
+        return render_template('create_acc.html')
 
 #accounts page
 @app.route('/my_account', methods= ['get', 'post'])
@@ -73,9 +76,10 @@ def create_account():
         username = request.form.get('username')
         password = request.form.get('password')
         email = request.form.get('email')
+        type = request.form.get('type')
         conn.execute(text(
-            'INSERT INTO account (first, last, username, password, email) VALUES (:first, :last, :username, :password, :email)'),
-                     {'first': first, 'last': last, 'username': username, 'password': password , 'email': email})
+            'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
+                     {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
         conn.commit()
         return render_template("create_acc.html")
     else:
@@ -94,14 +98,14 @@ def post_products():
                     title = request.form['title']
                     description = request.form['description']
                     images = request.form['images']
-                    warranty_period = request.form['warranty_period']
+                    warrenty_period = request.form['warrenty_period']
                     category = request.form['category']
                     colors = request.form['colors']
                     sizes = request.form['sizes']
                     inventory = request.form['inventory']
                     
-                    conn.execute(text("INSERT INTO product (title, description, images, warranty_period, category, colors, sizes, inventory) VALUES (:title, :description, :images, :warranty_period, :category, :colors, :sizes, :inventory)"), 
-                                {'title': title, 'description': description, 'images': images, 'warranty_period': warranty_period, 'category': category, 'colors': colors, 'sizes': sizes, 'inventory': inventory})
+                    conn.execute(text("INSERT INTO product (title, description, images, warrenty_period, category, colors, sizes, inventory) VALUES (:title, :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
+                                {'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors, 'sizes': sizes, 'inventory': inventory})
                     conn.commit()
                     return render_template('add_product.html')
                 else:
@@ -125,14 +129,16 @@ def post_products():
 def edit():
     return render_template('edit_product.html')
 
-@app.route('/edit', methods=['POST'])
-def edit_products():
-    upd = conn.execute(text("select * from product`  where product_id = :product_id"), request.form).all()
-    if not upd:
-        return render_template('update.html', search_info="Does not exist")
-    conn.execute(text("update boat set name=:name, type=:type, owner_id=:owner_id, rental_price=:rental_price where id=:id"), request.form)
-    conn.commit()
-    return render_template('edit_product.html', search_info=upd[0:])
+
+#Edit has boat stuff, but shows on the page well
+# @app.route('/edit', methods=['POST'])
+# def edit_products():
+#     upd = conn.execute(text("select * from product`  where product_id = :product_id"), request.form).all()
+#     if not upd:
+#         return render_template('update.html', search_info="Does not exist")
+#     conn.execute(text("update boat set name=:name, type=:type, owner_id=:owner_id, rental_price=:rental_price where id=:id"), request.form)
+#     conn.commit()
+#     return render_template('edit_product.html', search_info=upd[0:])
 
 #delete products
 
@@ -148,14 +154,14 @@ def delete_return():
         return render_template('delete.html', search_info=sear[0:])
      return render_template('delete.html')
 
-#
+#display products
 @app.route('/show_product', methods=["POST", "GET"])
 def show_product_page():
         products = conn.execute(text('select * from product'))
         return render_template('show_product.html', products = products)
 
 
-#search
+# search
 # @app.route('/search', methods=["POST", "GET"])
 # def search():
 #     if request.method == 'POST':
