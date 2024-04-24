@@ -156,8 +156,11 @@ def delete_return():
 #display products
 @app.route('/show_product', methods=["POST", "GET"])
 def show_product_page():
-        products = conn.execute(text('select * from product'))
-        return render_template('show_product.html', products = products)
+        if request.method == 'GET':
+            products = conn.execute(text('select * from product'))
+            return render_template('show_product.html', products = products)
+            # if request.method == 'POST':
+
 
 
 # search
