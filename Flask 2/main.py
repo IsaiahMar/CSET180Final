@@ -24,13 +24,12 @@ def login():
         account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\' or email = \'{username}\' "))
         user_data = account.fetchone()
         session['type'] = user_data.type
-
         
         if user_data:
-            if username == "Admin":
+            if user_data.type == "Admin":
                 session['loggedin'] = True
                 return redirect(url_for('admin_home'))
-            elif username == "Vendor":
+            elif user_data.type == "Vendor":
                 session['loggedin'] = True
                 return redirect(url_for('vendor_home'))
             elif password == user_data.password:
@@ -88,12 +87,12 @@ def create_account():
 
 #Create Prodcuts
 
-@app.route('/create_products', methods=['POST', 'GET'])
+@app.route('/create_products', methods=['GET', 'POST'])
 def post_products():
-    if 'username' in session:
-        account = conn.execute(text("SELECT * FROM account WHERE username = :username"), {"username": session['username']})
+    if 'type' in session :
+        account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data['username'] == 'Vendor' or user_data['username'] == 'Admin'):
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
@@ -109,7 +108,7 @@ def post_products():
                     conn.commit()
                     return render_template('add_product.html')
                 else:
-                    return 'Invalid request method. Only POST requests are allowed.'
+                    return render_template('add_product.html')
         else:
             return 'Unauthorized access. You must be either a Vendor or an Admin to post products.'
     else:
