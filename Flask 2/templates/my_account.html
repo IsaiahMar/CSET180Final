@@ -2,7 +2,8 @@
 
 {% block body %}
 
-    <h2>Welcome, {{ session['Username'] }}</h2>
-    <p>This is the accounts page. You are logged in.</p>
+    <h2>This is the accounts page. You are logged in.</p>
+    <h3>Welcome, {{ session['Username'] }}</h3>
+    <h3>You are a {{ session['Type'] }}</h3> 
 
 {% endblock %}
