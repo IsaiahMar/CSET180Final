@@ -23,15 +23,16 @@ def login():
         password = request.form.get('password')
         account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\'"))
         user_data = account.fetchone()
+        type = request.form.get('type')
         print(user_data)
         if user_data:
-            if username == "Admin":
+            if type == "Admin":
                 session['loggedin'] = True
-                session['Username'] = "Admin"
+                session['type'] = "Admin"
                 return redirect(url_for('admin_home'))
             elif username == "Vendor":
                 session['loggedin'] = True
-                session['Username'] = "Vendor"
+                session['type'] = "Vendor"
                 return redirect(url_for('vendor_home'))
             elif password == user_data.password:
                 session['loggedin'] = True
@@ -54,6 +55,13 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('homepage'))
+
+@app.route('/admin_home')
+def admin_home():
+    if session.get('loggedin') and session.get('type') == "Admin":
+        return "Welcome Admin!"
+    else:
+        return redirect(url_for('login'))
 
 #accounts page
 @app.route('/my_account', methods= ['get', 'post'])
