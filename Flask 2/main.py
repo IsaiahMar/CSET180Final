@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 from random import randint
 
 app = Flask(__name__)
-conn_str = 'mysql://root:Cookiebear1@/180final'
+conn_str = 'mysql://root:IMatornado$2023@localhost/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
@@ -21,21 +21,17 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        type = request.form.get('type')
         account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\' or email = \'{username}\' "))
         user_data = account.fetchone()
-
-        type = request.form.get('type')
         print(user_data)
         if user_data:
             if type == "Admin":
                 session['loggedin'] = True
                 session['type'] = "Admin"
-
-
                 return redirect(url_for('admin_home'))
             elif user_data.type == "Vendor":
                 session['loggedin'] = True
-
                 session['type'] = "Vendor"
                 return redirect(url_for('vendor_home'))
             elif password == user_data.password:
@@ -44,7 +40,7 @@ def login():
                 session['Name'] = f"{user_data.first} {user_data.last}"
                 msg = 'Login success!'
                 print(session)
-                return redirect(url_for('login'))
+                return redirect(url_for('my_account_page'))
             else:
                 msg = 'Wrong username or password'
         else:
@@ -105,7 +101,7 @@ def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
@@ -142,17 +138,17 @@ def edit():
     return render_template('edit_product.html')
 
 
-#Edit has boat stuff, but shows on the page well
-# @app.route('/edit', methods=['POST'])
-# def edit_products():
-#     upd = conn.execute(text("select * from product`  where product_id = :product_id"), request.form).all()
-#     if not upd:
-#         return render_template('update.html', search_info="Does not exist")
-#     conn.execute(text("update boat set name=:name, type=:type, owner_id=:owner_id, rental_price=:rental_price where id=:id"), request.form)
-#     conn.commit()
-#     return render_template('edit_product.html', search_info=upd[0:])
+# Edit has boat stuff, but shows on the page well
+@app.route('/edit', methods=['POST'])
+def edit_products():
+    upd = conn.execute(text("select * from product where title = :title"), request.form).all()
+    if not upd:
+        return render_template('edit_product.html', search_info="Does not exist")
+    conn.execute(text("update product set 'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors, 'sizes': sizes, 'inventory': inventory where id=:id"), request.form)
+    conn.commit()
+    return render_template('edit_product.html', search_info=upd[0:])
 
-#delete products
+# delete products
 
 
 @app.route('/delete_product', methods=["POST", "GET"])
