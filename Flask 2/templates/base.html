@@ -12,17 +12,28 @@
 <body>
 <header>
     <div>
-        <div class="topBar">
-            <ul class="barItem">
-                <li><a href="/">Home</a></li>
-                <li><a href="/create_acc">Create Acc</a></li>
-                <li><a href="/create_products">Add Products</a></li>
-                <li><a href="/edit"> Edit Products </a></li>
-                <li><a href="/delete_product">Delete Products</a></li>
-                <li><a href="/show_product">show_product</a></li>
-                <li><a href="/my_account"> My Account</a></li>
-            </ul>
-        </div>
+        <!-- {% if  session['loggedin'] == True and session['type'] == 'vendor'or session['type']== 'admin' %} -->
+            <div class="topBar">
+                <ul class="barItem">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/create_acc">Create Acc</a></li>
+                    <li><a href="/create_products">Add Products</a></li>
+                    <li><a href="/edit"> Edit Products </a></li>
+                    <li><a href="/delete_product">Delete Products</a></li>
+                    <li><a href="/show_product">show_product</a></li>
+                    <li><a href="/my_account"> My Account</a></li>
+                </ul>
+            </div>
+        <!-- {% else %}
+            <div class="topBar">
+                <ul class="barItem">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/create_acc">Create Acc</a></li>
+                    <li><a href="/show_product">show_product</a></li>
+                    <li><a href="/my_account"> My Account</a></li>
+                </ul>
+            </div>             -->
+        <!-- {% endif %} -->
 
         <div class="formSction bearItem">
             <form class="barItem" action="/login" method="post">
