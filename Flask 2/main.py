@@ -15,6 +15,7 @@ app.secret_key = 'secret key'
 def homepage():
     return render_template('base.html')
 
+
 # Login & logout
 @app.route('/login', methods=['GET', 'POST'])
 def login():
