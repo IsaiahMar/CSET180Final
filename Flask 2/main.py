@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 from random import randint
 
 app = Flask(__name__)
-conn_str = 'mysql://root:IMatornado$2023@localhost/180final'
+conn_str = 'mysql://root:Cookiebear1@/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
@@ -189,3 +189,5 @@ def search():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    

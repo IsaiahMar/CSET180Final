@@ -105,10 +105,11 @@ ul {
                     <li>warrenty_period: {{i[4]}}</li>
                     <li>category: <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
-                        <div class="dropdown-content">
-                        <a href="#">size 1</a>
+                        <a href="select">select 1</a>
                         <a href="#">size 2</a>
                         <a href="#">size 3</a>
+                        <div id="output"></div> 
+                        
                         </div>
                       </div></li>
                     <li>colors<div class="dropdown">
@@ -128,6 +129,7 @@ ul {
                         </div>
                       </div></li>
                     <li>inventory left: {{i[8]}}</li>
+                    
                     <form class="cart_button"  action="/add to cart" method="POST">
                         <input type="submit" value="add to cart" class="input_submit">
                     </form>
@@ -141,4 +143,49 @@ ul {
 
 
 
+<script>
+        const select = document.createElement('select');
+        select.id = 'select';
+
+        // Create select options
+        const option1 = document.createElement('option');
+        option1.value = '1';
+        option1.textContent = 'Option 1';
+        select.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = '2';
+        option2.textContent = 'Option 2';
+        select.appendChild(option2);
+
+        const option3 = document.createElement('option');
+        option3.value = '3';
+        option3.textContent = 'Option 3';
+        select.appendChild(option3);
+
+        // Append the select tag to the dropdown-content div
+        document.querySelector('.dropdown-content').appendChild(select);
+
+        // Create an empty DOM with an id to display the output.
+        const output = document.querySelector('#output');
+
+        // Create a button element for the user to click and see the option selected.
+        const button = document.createElement('button');
+        button.textContent = 'Show Selected';
+        document.querySelector('.dropdown-content').appendChild(button);
+
+        // Add an event listener to the select tag to listen for the change event.
+        select.addEventListener('change', function() {
+            // Get the selected option from the select tag.
+            const selectedOption = select.options[select.selectedIndex];
+
+            // Display the selected option in the empty DOM.
+            output.innerHTML = selectedOption.text;
+        });
+
+        // When the user clicks the button, display the selected option in the output DOM.
+        button.addEventListener('click', function() {
+            output.innerHTML = select.options[select.selectedIndex].text;
+        });
+    </script>
 

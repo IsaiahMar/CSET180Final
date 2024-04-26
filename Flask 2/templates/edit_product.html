@@ -23,6 +23,28 @@
     cursor: pointer;
   }
 
+    .input_submit:hover {
+      background-color: #45a049;
+    }
+
+    .btn {
+  border: none;
+  background-color: inherit;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.success {
+  color: green;
+}
+
+.success:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+
   .input_submit:hover {
     background-color: #45a049;
   }
@@ -43,5 +65,35 @@
 </form>
   <div>
       {{ search_info }}
+  <!-- <button onclick="addTextBox()">Add Color Box</button> -->
+
+
+<h2>All products that you as a {{session['type']}} can access</h2>
+{%for i in edit_products %}
+    <div class="products">
+        <ul>
+            <li>Item Id: {{i[0]}}</li>
+            <ul>
+                <li>Item Name: {{i[1]}}</li>
+                <li>Item description: {{i[2]}}</li>
+                <li>images: {{i[3]}}</li>
+                <li>warrenty_period: {{i[4]}}</li>
+                <li>category: {{i[5]}}</li>
+                <li>colors: {{i[6]}}</li>
+                <li>sizes: {{i[7]}}</li>
+                <li>inventory: {{i[8]}}</li>
+            </ul>
+        </ul>
+    </div>
+
+{%endfor%}
 </div>
 {% endblock %}
+</div>
+<script>
+  function addTextBox() {
+    var textBox = document.createElement("input");
+    textBox.type = "text";
+    document.body.appendChild(textBox);
+}
+</script>
