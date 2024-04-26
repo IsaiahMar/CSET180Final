@@ -15,39 +15,42 @@ app.secret_key = 'secret key'
 def homepage():
     return render_template('base.html')
 
+
 # Login & logout
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        type = request.form.get('type')
-        account = conn.execute(text(f"SELECT * FROM account WHERE username = \'{username}\' or email = \'{username}\' "))
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
         user_data = account.fetchone()
-        print(user_data)
+       
+
         if user_data:
-            if type == "Admin":
+            if user_data[6] == "admin":
                 session['loggedin'] = True
-                session['type'] = "Admin"
-                return redirect(url_for('admin_home'))
-            elif user_data.type == "Vendor":
+                session['type'] = "admin"
+                session['username'] = user_data[4]
+                return render_template('my_account.html')
+            elif user_data[6] == "vendor":
                 session['loggedin'] = True
-                session['type'] = "Vendor"
-                return redirect(url_for('vendor_home'))
-            elif password == user_data.password:
+                session['type'] = "vendor"
+                session['username'] = user_data[4]
+                return render_template('my_account.html')
+            elif password == user_data['password']:
                 session['loggedin'] = True
-                session['Username'] = user_data.username
-                session['Name'] = f"{user_data.first} {user_data.last}"
-                msg = 'Login success!'
-                print(session)
-                return redirect(url_for('my_account_page'))
+                session['username'] = user_data['username']
+                session['Name'] = f"{user_data['first']} {user_data['last']}"
+                return render_template('my_account.html')
             else:
                 msg = 'Wrong username or password'
+                return render_template('my_account.html')
         else:
             msg = 'User does not exist'
-        
-        return url_for('homepage', msg=msg)
-    return render_template('my_account.html')
+            return render_template('my_account.html')
+    else:
+       return render_template('my_account.html')
+
 
 
 #button in heading
@@ -55,7 +58,9 @@ def login():
 def logout():
     if request.method == 'POST':
         session.clear()
+        session['type'] = 'none'
         return render_template('create_acc.html')
+        
 
 @app.route('/admin_home')
 def admin_home():
@@ -67,10 +72,10 @@ def admin_home():
 #accounts page
 @app.route('/my_account', methods= ['get', 'post'])
 def my_account_page():
-    if 'Username' in session:
-        return render_template('my_account.html', username = session['Username'])
+    if 'username' in session:
+        return render_template('my_account.html', username = session['username'])
     else:
-        return redirect(url_for('login'))
+        return render_template('create_acc.html')
     
 @app.route('/create_acc', methods=['GET'])
 def show_newacc():
@@ -79,12 +84,12 @@ def show_newacc():
 @app.route('/create_acc', methods=['POST'])
 def create_account():
     if request.method == 'POST':
-        first = request.form.get('first')
-        last = request.form.get('last')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
-        type = request.form.get('type')
+        first = request.form.get('first').lower()
+        last = request.form.get('last').lower()
+        username = request.form.get('username').lower()
+        password = request.form.get('password').lower()
+        email = request.form.get('email').lower()
+        type = request.form.get('type').lower()
         conn.execute(text(
             'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
                      {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
@@ -101,7 +106,7 @@ def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
@@ -131,35 +136,36 @@ def post_products():
 #         return redirect(url_for('login'))
 
 
-
-#edit prodcuts
-@app.route('/edit', methods=['GET'])
-def edit():
-    return render_template('edit_product.html')
-
-
-# Edit has boat stuff, but shows on the page well
-@app.route('/edit', methods=['POST'])
+#Edit has boat stuff, but shows on the page well
+@app.route('/edit', methods=['GET','POST'])
 def edit_products():
-    upd = conn.execute(text("select * from product where title = :title"), request.form).all()
-    if not upd:
-        return render_template('edit_product.html', search_info="Does not exist")
-    conn.execute(text("update product set 'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors, 'sizes': sizes, 'inventory': inventory where id=:id"), request.form)
-    conn.commit()
-    return render_template('edit_product.html', search_info=upd[0:])
+    if request.method == 'GET':
+        edit_products = conn.execute(text('select * from product'))
+        return render_template('edit_product.html', edit_products = edit_products)
+    if request.method == 'POST':
+        product_id = request.form['product_id']
+        upd = conn.execute(text("select * from product where product_id = :product_id"), request.form).all()
+        conn.execute(text("update product set title=:title, description=:description, images=:images, warrenty_period=:warrenty_period,  category=:category, colors=:colors, sizes=:sizes, inventory=:inventory where product_id=:product_id"), request.form)
+        conn.commit()
+        if not upd:
+            return render_template('edit_product.html', search_info="Does not exist")
+        edit_products = conn.execute(text('select * from product'))
+        return render_template('edit_product.html', edit_products = edit_products)
 
-# delete products
+#delete products
 
 
 @app.route('/delete_product', methods=["POST", "GET"])
 def delete_return():
+     if request.method == 'GET':
+            edit_products = conn.execute(text('select * from product'))
+            return render_template('delete.html', edit_products = edit_products)
      if request.method == 'POST':
         sear = conn.execute(text("select * from product where product_id = :product_id"), request.form).all()
-        if not sear:
-            return render_template('delete.html', search_info="Does not exist")
         conn.execute(text("delete from product where product_id = :product_id"), request.form)
         conn.commit()
-        return render_template('delete.html', search_info=sear[0:])
+        edit_products = conn.execute(text('select * from product'))
+        return render_template('delete.html', edit_products = edit_products)
      return render_template('delete.html')
 
 #display products
@@ -173,11 +179,11 @@ def show_product_page():
 
 
 # search
-# @app.route('/search', methods=["POST", "GET"])
-# def search():
-#     if request.method == 'POST':
-#         product = conn.execute(text("select * from product where productid = :product_search"), request.form)
-#         return render_template("search.html", product=product)
+@app.route('/search', methods=["POST", "GET"])
+def search():
+    if request.method == 'POST':
+        product = conn.execute(text("select * from product where productid = :product_search"), request.form)
+        return render_template("search.html", product=product)
         
 
 

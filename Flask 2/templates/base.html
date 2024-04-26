@@ -12,18 +12,14 @@
 <body>
 <header>
     <div>
+        {% if session['type'] == 'none' %}
         <div class="topBar">
             <ul class="barItem">
                 <li><a href="/">Home</a></li>
                 <li><a href="/create_acc">Create Acc</a></li>
-                <li><a href="/create_products">Add Products</a></li>
-                <li><a href="/edit"> Edit Products </a></li>
-                <li><a href="/delete_product">Delete Products</a></li>
-                <li><a href="/show_product">show_product</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>
-        
         <div class="formSection barItem"> <!-- Corrected class name -->
             <form class="barItem" action="/login" method="post">
                 <input type="text" name="username" value="" placeholder="username" required>
@@ -35,12 +31,29 @@
             </form>
         </div>
         {% if session['type'] == 'admin' %}
-        <li><a href="/">Home</a></li>
+        <div class="topBar">
+            <li><a href="/">Home</a></li>
                 <li><a href="/create_products">Add Products</a></li>
                 <li><a href="/edit"> Edit Products </a></li>
                 <li><a href="/delete_product">Delete Products</a></li>
                 <li><a href="/show_product">show_product</a></li>
                 <li><a href="/my_account"> My Account</a></li>
+        </div>
+        
+        {% elif session['type'] == 'vendor' %}
+        <div class="topBar">
+            <li><a href="/create_products">Add Products</a></li>
+            <li><a href="/edit"> Edit Products </a></li>
+            <li><a href="/delete_product">Delete Products</a></li>
+            <li><a href="/show_product">show_product</a></li>
+            <li><a href="/my_account"> My Account</a></li>
+        </div>
+        
+        {% elif session['type'] == 'customer' %}
+        <div class="topBar">
+            <li><a href="/show_products">Store</a></li>
+            <li><a href="/cart"> Cart </a></li>
+        </div>
         {% endif %}
         </header> <!-- Moved the closing header tag -->
         
