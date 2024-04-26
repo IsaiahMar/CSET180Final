@@ -30,12 +30,12 @@ def login():
                 session['loggedin'] = True
                 session['type'] = "admin"
                 session['username'] = user_data[4]
-                return redirect(url_for('admin_home'))
+                return render_template('my_account.html')
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
                 session['type'] = "vendor"
                 session['username'] = user_data[4]
-                return redirect(url_for('vendor_home'))
+                return render_template('my_account.html')
             elif password == user_data['password']:
                 session['loggedin'] = True
                 session['username'] = user_data['username']
@@ -57,7 +57,9 @@ def login():
 def logout():
     if request.method == 'POST':
         session.clear()
+        session['type'] = 'none'
         return render_template('create_acc.html')
+        
 
 @app.route('/admin_home')
 def admin_home():
@@ -81,12 +83,12 @@ def show_newacc():
 @app.route('/create_acc', methods=['POST'])
 def create_account():
     if request.method == 'POST':
-        first = request.form.get('first')
-        last = request.form.get('last')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
-        type = request.form.get('type')
+        first = request.form.get('first').lower()
+        last = request.form.get('last').lower()
+        username = request.form.get('username').lower()
+        password = request.form.get('password').lower()
+        email = request.form.get('email').lower()
+        type = request.form.get('type').lower()
         conn.execute(text(
             'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
                      {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
@@ -186,3 +188,5 @@ def search():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    
