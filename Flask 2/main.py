@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, abort, ses
 from sqlalchemy import create_engine, text
 from random import randint
 
+
+
 app = Flask(__name__)
 conn_str = 'mysql://root:Cookiebear1@/180final'
 engine = create_engine(conn_str, echo = True)
@@ -89,13 +91,14 @@ def create_account():
         password = request.form.get('password').lower()
         email = request.form.get('email').lower()
         type = request.form.get('type').lower()
-        conn.execute(text(
-            'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
-                     {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
-        conn.commit()
-        return render_template("create_acc.html")
-    else:
-        return render_template('create_acc.html')
+        if type in ['vendor', 'admin', 'customer']:
+            conn.execute(text('INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
+                        {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
+            conn.commit()
+            return render_template("create_acc.html")
+        else: 
+            return ("must provide valid type")
+       
 
 
 #Create Prodcuts
@@ -181,8 +184,19 @@ def show_product_page():
 @app.route('/search', methods=["POST", "GET"])
 def search():
     if request.method == 'POST':
-        product = conn.execute(text("select * from product where productid = :product_search"), request.form)
-        return render_template("search.html", product=product)
+        product_search = request.form['product_search']
+        type = session[6]
+        products = (text("SELECT * FROM account WHERE username LIKE :product_search and " ), {'product_search': f"%{product_search}%"})
+        if product_search != products:
+            return render_template("show_product.html", products=products)  
+        # else: 
+        #     products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        return render_template("show_product.html", products=products)
+ 
+
+        # products = conn.execute(text("SELECT * FROM account WHERE account_id LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        # or description LIKE '%:product_search%' or description LIKE '%:product_search%'
+       
         
 
 

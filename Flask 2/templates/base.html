@@ -12,50 +12,6 @@
 <body>
 <header>
     <div>
-       <!-- {% if  session['loggedin'] == True and session['type'] == 'vendor'or session['type']== 'admin' %} -->
-            <!-- <div class="topBar">
-                <ul class="barItem">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/create_acc">Create Acc</a></li>
-                    <li><a href="/create_products">Add Products</a></li>
-                    <li><a href="/edit"> Edit Products </a></li>
-                    <li><a href="/delete_product">Delete Products</a></li>
-                    <li><a href="/show_product">show_product</a></li>
-                    <li><a href="/my_account"> My Account</a></li>
-                </ul>
-            </div> -->
-        <!-- {% else %}
-            <div class="topBar">
-                <ul class="barItem">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/create_acc">Create Acc</a></li>
-                    <li><a href="/show_product">show_product</a></li>
-                    <li><a href="/my_account"> My Account</a></li>
-                </ul>
-            </div>             -->
-        <!-- {% endif %} -->
-        <!-- {% if session['type'] == 'admin' %}
-                <li><a href="/">Home</a></li>
-                <li><a href="/create_products">Add Products</a></li>
-                <li><a href="/edit"> Edit Products </a></li>
-                <li><a href="/delete_product">Delete Products</a></li>
-                <li><a href="/show_product">show_product</a></li>
-                <li><a href="/my_account"> My Account</a></li>
-        {% endif %} -->
-        <!-- </header> Moved the closing header tag -->
-        
-        <!-- <div class="formSction bearItem">
-        <div class="topBar">
-            <ul class="barItem">
-                <li><a href="/">Home</a></li>
-                <li><a href="/create_acc">Create Acc</a></li>
-                <li><a href="/create_products">Add Products</a></li>
-                <li><a href="/edit"> Edit Products </a></li>
-                <li><a href="/delete_product">Delete Products</a></li>
-                <li><a href="/show_product">show_product</a></li>
-                <li><a href="/my_account"> My Account</a></li>
-            </ul>
-        </div> -->
         {% if session['type'] == 'none' %}
         <header>
         <div class="topBar">
@@ -122,8 +78,39 @@
         
         {% elif session['type'] == 'Customer' %}
         <div class="topBar">
-            <li><a href="/show_products">Store</a></li>
-            <li><a href="/cart"> Cart </a></li>
+            <ul class="barItem">
+                <li><a href="/">Home</a></li>
+                <li><a href="/show_product">show_product</a></li>
+                <li><a href="/my_account"> My Account</a></li>
+            </ul>
+        </div>
+        <div class="formSection barItem"> 
+            <form class="barItem" action="/login" method="post">
+                <input type="text" name="username" value="" placeholder="username" required>
+                <input type="password" name="password" value="" placeholder="password" required>
+                <input type="submit" name="loginButton" value="LOGIN">
+            </form>
+            <form action="{{url_for('logout')}}" method="post">
+                <button class="barItem input" style="margin-left:10px;">SIGNOUT</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="topBar">
+            <ul class="barItem">
+                <li><a href="/">Home</a></li>
+                <li><a href="/show_product">show_product</a></li>
+                <li><a href="/my_account"> My Account</a></li>
+            </ul>
+        </div>
+        <div class="formSection barItem"> 
+            <form class="barItem" action="/login" method="post">
+                <input type="text" name="username" value="" placeholder="username" required>
+                <input type="password" name="password" value="" placeholder="password" required>
+                <input type="submit" name="loginButton" value="LOGIN">
+            </form>
+            <form action="{{url_for('logout')}}" method="post">
+                <button class="barItem input" style="margin-left:10px;">SIGNOUT</button>
+            </form>
         </div>
         {% endif %}
         </header> 

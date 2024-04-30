@@ -3,6 +3,7 @@
     margin-left: 50px;
     margin-right: 50px;
 }
+/* class inputs */
 .input_field {
     width: 100%;
     padding: 12px 20px;
@@ -28,18 +29,22 @@
     background-color: #45a049;
 }
 .search{ 
-    border: solid 1px;
+    /* border: solid 1px; */
 
 }
 .products{
     border: solid 1px;
+    border-radius: 25px;
     margin: 20px;
     list-style-type: none;
+    background-color: rgb(217, 216, 216);
 }
 ul {
     list-style-type: none;
 }
 
+
+/* DROP DOWN */
 .dropbtn {
     background-color: #4CAF50;
     color: white;
@@ -85,6 +90,14 @@ ul {
 .cart_button{
     width: 20%;
 }
+
+img{
+    height: 200px;
+    height: 200px;
+    object-fit: cover ;
+    overflow: hidden;
+}
+
 </style>
 {%extends "base.html"%}
 {%block body%}
@@ -101,26 +114,21 @@ ul {
                 <li>Item Name: {{i[1]}}</li>
                 <ul>
                     <li>Item description: {{i[2]}}</li>
-                    <li>images: {{i[3]}}</li>
+                    <!-- will need to be able to show and add multiple images -->
+                    <li><img src={{i[3]}} alt="no images selected">
+                    </li>
                     <li>warrenty_period: {{i[4]}}</li>
-                    <li>category: <div class="dropdown">
+                    <li>category: 
+                        <!-- <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
-                        <a href="select">select 1</a>
+                        <a href= "select">select 1</a>
                         <a href="#">size 2</a>
                         <a href="#">size 3</a>
-                        <div id="output"></div> 
-                        
-                        </div>
-                      </div></li>
-                    <li>colors<div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                        <div class="dropdown-content">
-                        <a href="#">size 1</a>
-                        <a href="#">size 2</a>
-                        <a href="#">size 3</a>
-                        </div>
-                      </div></li>
-                    <li>sizes: <div class="dropdown">
+                        <div id="output"></div>  -->
+                        <!-- </div> -->
+                    </li>
+                    <li>colors
+                        <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
                         <div class="dropdown-content">
                         <a href="#">size 1</a>
@@ -128,6 +136,16 @@ ul {
                         <a href="#">size 3</a>
                         </div>
                       </div></li>
+                    <li>sizes: 
+                        <!-- <div class="dropdown">
+                        <button class="dropbtn">Dropdown</button>
+                        <div class="dropdown-content">
+                        <a href="#">size 1</a>
+                        <a href="#">size 2</a>
+                        <a href="#">size 3</a>
+                        </div> -->
+                      <!-- </div> -->
+                    </li>
                     <li>inventory left: {{i[8]}}</li>
                     
                     <form class="cart_button"  action="/add to cart" method="POST">
