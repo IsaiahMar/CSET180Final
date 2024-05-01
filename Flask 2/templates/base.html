@@ -21,7 +21,6 @@
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>
-   
         <div class="formSection barItem"> <!-- Corrected class name -->
             <form class="barItem" action="/login" method="post">
                 <input type="text" name="username" value="" placeholder="username" required>
@@ -32,6 +31,7 @@
                 <button class="barItem input" style="margin-left:10px;">SIGNOUT</button>
             </form>
         </div>
+
         {% elif session['type'] == 'admin' %}
         <div class="topBar">
             <ul class="barItem">

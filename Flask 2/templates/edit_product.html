@@ -53,6 +53,7 @@
 {% block body %}
 <div class="body">
 <form action="/edit" method="POST">
+<<<<<<< HEAD
     <input type="text" name="product_id" placeholder="product id" class="input_field"> <br>
     <input type="text" name="title" placeholder="new title" class="input_field"> <br>
     <input type="text" name="description" placeholder="new description" class="input_field"> <br>
@@ -68,6 +69,20 @@
   </div>
 
   
+=======
+  <input type="text" name="title" placeholder="title" class="input_field"> <br>
+  <input type="text" name="description" placeholder="description" class="input_field"> <br>
+  <input type="text" name="images" placeholder="images" class="input_field"> <br>
+  <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
+  <input type="text" name="category" placeholder="category" class="input_field"> <br>
+  <input type="text" name="colors" placeholder="colors" class="input_field"> <br>
+  <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
+  <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
+  <input type="submit" value="Submit" class="input_submit">
+</form>
+  <div>
+      {{ search_info }}
+>>>>>>> refs/remotes/origin/main
   <!-- <button onclick="addTextBox()">Add Color Box</button> -->
 
 
@@ -88,9 +103,14 @@
             </ul>
         </ul>
     </div>
+<<<<<<< HEAD
 {%endfor%}
 
 
+=======
+
+{%endfor%}
+>>>>>>> refs/remotes/origin/main
 </div>
 {% endblock %}
 </div>
