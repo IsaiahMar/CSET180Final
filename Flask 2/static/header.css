@@ -1,3 +1,4 @@
+
 .body {
   cursor: auto;
 }
@@ -226,3 +227,7 @@ body {
     flex: 2 0px;
   }
 }
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */

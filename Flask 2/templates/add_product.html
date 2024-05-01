@@ -39,14 +39,18 @@
             <input type="text" name="images" placeholder="images" class="input_field"> <br>
             <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
             <input type="text" name="category" placeholder="category" class="input_field"> <br>
-              <div>
-                <input type="text" name="colors" placeholder="colors" class="input_field"> <br>
-                <button onclick="addtextBox"></button>
-              </div>
-              <div>
+            <input type="text" name="colors" placeholder="Colors" class="input_field"><br>
+            
+            <label for="colors_dropdown">Choose a color:</label>
+            <select id="colors_dropdown" name="colors_dropdown">
+              {% for color in colors %}
+              <option value="{{ color }}">{{ color }}</option>
+              {% endfor %}
+            </select>
+            
                 <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
-              </div>
             <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
+          </div>
             <input type="submit" value="Submit" class="input_submit">
         </form>
     </div>

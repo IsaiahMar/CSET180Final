@@ -1,6 +1,6 @@
 import flask
-from flask import Flask, render_template, request, redirect, url_for, abort, session
-from sqlalchemy import create_engine, text
+from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify
+from sqlalchemy import *
 from random import randint
 
 app = Flask(__name__)
@@ -24,32 +24,26 @@ def login():
         password = request.form.get('password')
         account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
         user_data = account.fetchone()
-       
+        
 
         if user_data:
             if user_data[6] == "admin":
                 session['loggedin'] = True
                 session['type'] = "admin"
-                session['username'] = user_data[4]
-                return render_template('my_account.html')
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
                 session['type'] = "vendor"
-                session['username'] = user_data[4]
-                return render_template('my_account.html')
-            elif password == user_data['password']:
+            elif password == user_data[5]:
                 session['loggedin'] = True
-                session['username'] = user_data['username']
-                session['Name'] = f"{user_data['first']} {user_data['last']}"
-                return render_template('my_account.html')
-            else:
-                msg = 'Wrong username or password'
-                return render_template('my_account.html')
+                session['username'] = user_data[4] 
+                session['Name'] = f"{user_data[1]} {user_data[2]}"
         else:
-            msg = 'User does not exist'
-            return render_template('my_account.html')
+            msg = 'Wrong username or password'
     else:
-       return render_template('my_account.html')
+        msg = 'User does not exist'
+
+    return render_template('my_account.html')
+
 
 
 
@@ -83,20 +77,17 @@ def show_newacc():
 #create/ register account 
 @app.route('/create_acc', methods=['POST'])
 def create_account():
-    if request.method == 'POST':
-        first = request.form.get('first').lower()
-        last = request.form.get('last').lower()
-        username = request.form.get('username').lower()
-        password = request.form.get('password').lower()
-        email = request.form.get('email').lower()
-        type = request.form.get('type').lower()
-        conn.execute(text(
-            'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
-                     {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
-        conn.commit()
-        return render_template("create_acc.html")
-    else:
-        return render_template('create_acc.html')
+    first = request.form.get('first').lower()
+    last = request.form.get('last').lower()
+    username = request.form.get('username').lower()
+    password = request.form.get('password').lower()
+    email = request.form.get('email').lower()
+    type = request.form.get('type').lower()
+    conn.execute(text(
+        'INSERT INTO account (first, last, username, password, email,type) VALUES (:first, :last, :username, :password, :email, :type)'),
+                    {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
+    conn.commit()
+    return render_template("create_acc.html")
 
 
 #Create Prodcuts
@@ -106,7 +97,7 @@ def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
@@ -116,11 +107,11 @@ def post_products():
                     colors = request.form['colors']
                     sizes = request.form['sizes']
                     inventory = request.form['inventory']
-                    
+                    colors = ['Red', 'Green', 'Blue', 'Yellow']
+                    colors_str = ', '.join(colors) 
                     conn.execute(text("INSERT INTO product (title, description, images, warrenty_period, category, colors, sizes, inventory) VALUES (:title, :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
-                                {'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors, 'sizes': sizes, 'inventory': inventory})
-                    conn.commit()
-                    return render_template('add_product.html')
+              {'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors_str, 'sizes': sizes, 'inventory': inventory})
+                    return render_template('add_product.html', colors=colors)
                 else:
                     return render_template('add_product.html')
         else:
@@ -140,17 +131,19 @@ def post_products():
 @app.route('/edit', methods=['GET','POST'])
 def edit_products():
     if request.method == 'GET':
-        edit_products = conn.execute(text('select * from product'))
-        return render_template('edit_product.html', edit_products = edit_products)
+        edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+        colors = conn.execute(text('SELECT DISTINCT colors FROM product')).fetchall()
+        return render_template('edit_product.html', edit_products=edit_products, colors=colors)
+    
     if request.method == 'POST':
-        product_id = request.form['product_id']
-        upd = conn.execute(text("select * from product where product_id = :product_id"), request.form).all()
-        conn.execute(text("update product set title=:title, description=:description, images=:images, warrenty_period=:warrenty_period,  category=:category, colors=:colors, sizes=:sizes, inventory=:inventory where product_id=:product_id"), request.form)
+        product_id = request.form.get('product_id')
+        sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
+        colors_str = ', '.join(colors)
+        conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warrenty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
         conn.commit()
-        if not upd:
-            return render_template('edit_product.html', search_info="Does not exist")
-        edit_products = conn.execute(text('select * from product'))
-        return render_template('edit_product.html', edit_products = edit_products)
+        edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+        return render_template('edit_product.html', edit_products=edit_products, sizes=sizes)
+    
 
 #delete products
 
