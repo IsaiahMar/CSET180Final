@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort, ses
 from sqlalchemy import *
 from random import randint
 
+
 app = Flask(__name__)
 conn_str = 'mysql://root:IMatornado$2023@localhost/180final'
 engine = create_engine(conn_str, echo = True)
@@ -14,17 +15,13 @@ app.secret_key = 'secret key'
 @app.route('/', methods=['GET'])
 def homepage():
     return render_template('base.html')
-
-
-# Login & logout
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/login_page', methods=['GET', 'POST'])
+def login_page():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+        account = conn.execute(text("SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
         user_data = account.fetchone()
-        
 
         if user_data:
             if user_data[6] == "admin":
@@ -35,14 +32,43 @@ def login():
                 session['type'] = "vendor"
             elif password == user_data[5]:
                 session['loggedin'] = True
-                session['username'] = user_data[4] 
+                session['username'] = user_data[4]
                 session['Name'] = f"{user_data[1]} {user_data[2]}"
+            else:
+                msg = 'Wrong password'
         else:
-            msg = 'Wrong username or password'
+            msg = 'User does not exist'
     else:
-        msg = 'User does not exist'
+        msg = 'Method not allowed'
 
-    return render_template('my_account.html')
+    return render_template('my_account.html', msg=msg)
+# Login & logout
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         username = request.form.get('username')
+#         password = request.form.get('password')
+#         account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+#         user_data = account.fetchone()
+        
+
+#         if user_data:
+#             if user_data[6] == "admin":
+#                 session['loggedin'] = True
+#                 session['type'] = "admin"
+#             elif user_data[6] == "vendor":
+#                 session['loggedin'] = True
+#                 session['type'] = "vendor"
+#             elif password == user_data[5]:
+#                 session['loggedin'] = True
+#                 session['username'] = user_data[4] 
+#                 session['Name'] = f"{user_data[1]} {user_data[2]}"
+#         else:
+#             msg = 'Wrong username or password'
+#     else:
+#         msg = 'User does not exist'
+
+#     return render_template('my_account.html')
 
 
 
@@ -97,21 +123,16 @@ def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'Admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
-                    images = request.form['images']
                     warrenty_period = request.form['warrenty_period']
                     category = request.form['category']
-                    colors = request.form['colors']
-                    sizes = request.form['sizes']
                     inventory = request.form['inventory']
-                    colors = ['Red', 'Green', 'Blue', 'Yellow']
-                    colors_str = ', '.join(colors) 
-                    conn.execute(text("INSERT INTO product (title, description, images, warrenty_period, category, colors, sizes, inventory) VALUES (:title, :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
-              {'title': title, 'description': description, 'images': images, 'warrenty_period': warrenty_period, 'category': category, 'colors': colors_str, 'sizes': sizes, 'inventory': inventory})
-                    return render_template('add_product.html', colors=colors)
+                    conn.execute(text("INSERT INTO product (title, description, warrenty_period, category, inventory) VALUES (:title, :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
+              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'inventory': inventory})
+                    return render_template('add_product.html')
                 else:
                     return render_template('add_product.html')
         else:

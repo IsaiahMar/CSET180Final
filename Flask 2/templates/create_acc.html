@@ -1,6 +1,7 @@
 <style>
     .body{
         margin: auto;
+        width: 50%;
     }
     .input_field {
       width: 100%;
@@ -43,21 +44,6 @@
         <input type="submit" value="Submit" class="input_submit">
     </form>
 </div>
-<script>
-function signUp() {
-    let name = document.getElementById("name").value;
-    let email = document.getElementById("email").value;
-    let pass = document.getElementById("pass").value;
 
-    if (email == "" || pass == "") {
-        alert("Please fill the forms");
-    } else {
-        localStorage.setItem('name', name); 
-        localStorage.setItem(email, pass);
-        alert("Account Created");
-        location.replace("login.html");
-    }
-}
-</script>
 
 {% endblock %}
