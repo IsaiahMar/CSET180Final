@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
-{% block main %}
 {% block body %}
+    <form id="login_page" action="/login_page" method="POST">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+{% endblock %}
 
-<form action="/login_page" method="POST">
-    <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username"><br>
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password"><br><br>
-    <input type="submit" value="Login">
-</form>
-{% endblock %}
-{% endblock %}
