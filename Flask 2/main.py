@@ -5,7 +5,7 @@ from random import randint
 
 
 app = Flask(__name__)
-conn_str = 'mysql://root:IMatornado$2023@localhost/180final'
+conn_str = 'mysql://root:Cookiebear1@/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
@@ -27,6 +27,9 @@ def login_page():
             if user_data[6] == "admin":
                 session['loggedin'] = True
                 session['type'] = "admin"
+                session['username'] = user_data[4]
+                return render_template('my_account.html', loggedIn = session['loggedin'])
+            
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
                 session['type'] = "vendor"
@@ -81,7 +84,7 @@ def logout():
         session['type'] = 'none'
         return render_template('create_acc.html')
         
-
+#ADMIN HOMe is it being used??!
 @app.route('/admin_home')
 def admin_home():
     if session.get('loggedin') and session.get('type') == "Admin":
@@ -95,12 +98,13 @@ def my_account_page():
     if 'username' in session:
         return render_template('my_account.html', username = session['username'])
     else:
-        return render_template('create_acc.html')
+        return render_template('my_account.html')
     
+#CREATE ACCOUNT GET
 @app.route('/create_acc', methods=['GET'])
 def show_newacc():
     return render_template('create_acc.html')
-#create/ register account 
+#CREATE  ACCOUNT POST
 @app.route('/create_acc', methods=['POST'])
 def create_account():
     first = request.form.get('first').lower()
@@ -140,13 +144,6 @@ def post_products():
     else:
         return 'Unauthorized access. Please log in first.'
 
-# @app.route('/my_account', methods=['GET', 'POST'])
-# def my_account_page():
-#     if 'Username' in session:  # Change 'username' to 'Username'
-#         return render_template('my_account.html', username=session['Username'])
-#     else:
-#         return redirect(url_for('login'))
-
 
 #Edit has boat stuff, but shows on the page well
 @app.route('/edit', methods=['GET','POST'])
@@ -169,18 +166,42 @@ def edit_products():
 #delete products
 
 
-@app.route('/delete_product', methods=["POST", "GET"])
+@app.route('/delete_product', methods=["GET"])
 def delete_return():
-     if request.method == 'GET':
-            edit_products = conn.execute(text('select * from product'))
-            return render_template('delete.html', edit_products = edit_products)
-     if request.method == 'POST':
-        sear = conn.execute(text("select * from product where product_id = :product_id"), request.form).all()
-        conn.execute(text("delete from product where product_id = :product_id"), request.form)
-        conn.commit()
-        edit_products = conn.execute(text('select * from product'))
-        return render_template('delete.html', edit_products = edit_products)
-     return render_template('delete.html')
+   if request.method == 'GET':
+    username = session.get('username')  # Retrieve username from session
+    account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': username})
+    user_data = account.fetchone()
+    
+    if user_data:
+        user_type = user_data[6] 
+        if user_type == 'vendor' and username == user_data[1]: 
+            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
+            return render_template('delete.html', edit_products=edit_products)
+        elif user_type == 'admin':
+            edit_products = conn.execute(text('SELECT * FROM product'))
+            return render_template('delete.html', edit_products=edit_products)
+    return "Unauthorized access"
+   
+@app.route('/delete_product', methods=["POST"])
+def delete_return_post():
+    if request.method == 'POST':
+        username = session.get('username')  # Retrieve username from session
+    account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': username})
+    user_data = account.fetchone()
+    
+    if user_data:
+        user_type = user_data[6] 
+        if user_type == 'vendor' and username == user_data[1]: 
+            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
+            # sear = conn.execute(text("SELECT * FROM product WHERE product_id = :product_id"), request.form).all()
+            conn.execute(text("DELETE FROM product WHERE product_id = :product_id"), request.form)
+            conn.commit()
+            edit_products = conn.execute(text('SELECT * FROM product'))
+            return render_template('delete.html', edit_products=edit_products)
+        elif user_data[6] == 'admin':
+            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
+            return render_template('delete.html', edit_products=edit_products)
 
 #display products
 @app.route('/show_product', methods=["POST", "GET"])
@@ -196,10 +217,23 @@ def show_product_page():
 @app.route('/search', methods=["POST", "GET"])
 def search():
     if request.method == 'POST':
-        product = conn.execute(text("select * from product where productid = :product_search"), request.form)
-        return render_template("search.html", product=product)
+        product_search = request.form['product_search']
+        type = session[6]
+        products = (text("SELECT * FROM account WHERE username LIKE :product_search and " ), {'product_search': f"%{product_search}%"})
+        if product_search != products:
+            return render_template("show_product.html", products=products)  
+        # else: 
+        #     products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        return render_template("show_product.html", products=products)
+ 
+
+        # products = conn.execute(text("SELECT * FROM account WHERE account_id LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        # or description LIKE '%:product_search%' or description LIKE '%:product_search%'
+       
         
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    
