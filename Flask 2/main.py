@@ -5,7 +5,7 @@ from random import randint
 
 
 app = Flask(__name__)
-conn_str = 'mysql://root:Cookiebear1@/180final'
+conn_str = 'mysql://root:IMatornado$2023@/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
@@ -28,7 +28,7 @@ def login_page():
                 session['loggedin'] = True
                 session['type'] = "admin"
                 session['username'] = user_data[4]
-                return render_template('my_account.html', loggedIn = session['loggedin'])
+                return render_template('my_account.html', loggedIn=session['loggedin'])
             
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
@@ -44,7 +44,9 @@ def login_page():
     else:
         msg = 'Method not allowed'
 
-    return render_template('my_account.html', msg=msg)
+    # Render the login page if the login attempt failed or if the method was not POST
+    return render_template('login.html')
+
 # Login & logout
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
@@ -127,7 +129,7 @@ def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'Admin'):
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
                 if request.method == 'POST':
                     title = request.form['title']
                     description = request.form['description']
