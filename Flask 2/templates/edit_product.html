@@ -75,14 +75,26 @@
   <input type="text" name="images" placeholder="images" class="input_field"> <br>
   <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
   <input type="text" name="category" placeholder="category" class="input_field"> <br>
-  <input type="text" name="colors" placeholder="colors" class="input_field"> <br>
+  <input type="text" name="colors" placeholder="colors" class="input_field"> 
+  <select id="colors_dropdown" name="colors_dropdown">
+    {% for color in colors %}
+      <option value="{{ color }}">{{ color }}</option>
+    {% endfor %}
+  </select>
+  <script>
+    
+  </script>
   <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
+  <select id="sizes_dropdown" name="sizes_dropdown">
+    {% for size in sizes %}
+      <option value="{{ size }}">{{ size }}</option>
+    {% endfor %}
+  </select>
   <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
   <input type="submit" value="Submit" class="input_submit">
 </form>
   <div>
       {{ search_info }}
->>>>>>> refs/remotes/origin/main
   <!-- <button onclick="addTextBox()">Add Color Box</button> -->
 
 
@@ -103,14 +115,9 @@
             </ul>
         </ul>
     </div>
-<<<<<<< HEAD
 {%endfor%}
 
 
-=======
-
-{%endfor%}
->>>>>>> refs/remotes/origin/main
 </div>
 {% endblock %}
 </div>
