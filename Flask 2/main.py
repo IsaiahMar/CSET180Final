@@ -121,26 +121,45 @@ def create_account():
     conn.commit()
     return render_template("create_acc.html")
 
-
+@app.route('/create_products', methods=["GET"])
+def new_products():
+    if 'create_product_error' in session:
+        prod_error = session['create_product_error']
+    else:
+        prod_error = null
+    return render_template('add_product.html', prod_error = prod_error)
 #Create Prodcuts
 
-@app.route('/create_products', methods=['GET', 'POST'])
+@app.route('/create_products', methods=['POST'])
 def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
+        
         user_data = account.fetchone()
-        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
-                if request.method == 'POST':
+        print(user_data[-1])
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
                     title = request.form['title']
                     description = request.form['description']
                     warrenty_period = request.form['warrenty_period']
                     category = request.form['category']
-                    inventory = request.form['inventory']
-                    conn.execute(text("INSERT INTO product (title, description, warrenty_period, category, inventory) VALUES (:title, :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
-              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'inventory': inventory})
-                    return render_template('add_product.html')
-                else:
-                    return render_template('add_product.html')
+                    quantity = request.form['quantity']
+                    if(title == "" or description == "" or category == ""):
+                        session['create_product_error'] = 'Fields are empty!'
+                        return redirect(url_for('new_products'))
+                    duplicate_product = conn.execute(text(f'select * from product where VendorID In(:VendorID) and title in(:title)'))
+                    if len(duplicate_product) > 0:
+                        session['create_product_error'] = 'This already exists!'
+                        return redirect(url_for('new_products'))
+                        
+                    else:
+                        print("Not a duplicate")
+                        conn.execute(text("INSERT INTO product (title, VendorID, description, images, warrenty_period, category, inventory) VALUES (:title, :VendorID :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
+              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'quantity': quantity})
+                    
+                    
+                    product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
+                    conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
+                    return redirect('url_for(new_products)')
         else:
             return 'Unauthorized access. You must be either a Vendor or an Admin to post products.'
     else:
@@ -152,8 +171,7 @@ def post_products():
 def edit_products():
     if request.method == 'GET':
         edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
-        colors = conn.execute(text('SELECT DISTINCT colors FROM product')).fetchall()
-        return render_template('edit_product.html', edit_products=edit_products, colors=colors)
+        return render_template('edit_product.html', edit_products=edit_products)
     
     if request.method == 'POST':
         product_id = request.form.get('product_id')
