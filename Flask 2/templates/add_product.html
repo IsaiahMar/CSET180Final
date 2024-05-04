@@ -33,21 +33,26 @@
 {% block body %}
     <h1>This is the create product page</h1>
     <div class="body">
+      <div class="p-4 sm:ml-64">
         <form action="/create_products" method="POST">
             <input type="text" name="title" placeholder="title" class="input_field"> <br>
             <input type="text area" name="description" placeholder="description" class="input_field"> <br>
             <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
             <input type="text" name="category" placeholder="category" class="input_field"> <br>
-            
-            <label for="colors_dropdown">Choose a color:</label>
-            <button class="add-btn">Add</button>
-            
-                <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
             <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
-          </div>
+            <input type="text" name="image" placeholder="image" class="input_field"> <br>
+            <input type="text" name="color" placeholder="color" class="input_field"> <br>
+            <input type="text" name="size" placeholder="size" class="input_field"> <br>
+            <input type="text" name="quantity" placeholder="quantity" class="input_field"> <br>
             <input type="submit" value="Submit" class="input_submit">
+            {% if prod_error%}
+            <p style="color: red;">{{ prod_error }}</p>
+            {%endif%}
         </form>
+        
+        </div>
     </div>
+
 {% endblock %}
 
 <script>
