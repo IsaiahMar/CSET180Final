@@ -141,25 +141,27 @@ def post_products():
                     title = request.form['title']
                     description = request.form['description']
                     warrenty_period = request.form['warrenty_period']
+                    VendorID = request.form['VendorID']
                     category = request.form['category']
-                    quantity = request.form['quantity']
+                    inventory = request.form['inventory']
                     if(title == "" or description == "" or category == ""):
                         session['create_product_error'] = 'Fields are empty!'
-                        return redirect(url_for('new_products'))
-                    duplicate_product = conn.execute(text(f'select * from product where VendorID In(:VendorID) and title in(:title)'))
+                        return render_template('add.product.html')
+                    duplicate_product = conn.execute(text('SELECT * FROM product WHERE VendorID = :VendorID AND title = :title'), 
+                                      {'VendorID': VendorID, 'title': title}).fetchall()
                     if len(duplicate_product) > 0:
                         session['create_product_error'] = 'This already exists!'
-                        return redirect(url_for('new_products'))
+                        return render_template('add_product.html')
                         
                     else:
                         print("Not a duplicate")
-                        conn.execute(text("INSERT INTO product (title, VendorID, description, images, warrenty_period, category, inventory) VALUES (:title, :VendorID :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory)"), 
-              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'quantity': quantity})
+                        conn.execute(text("INSERT INTO product (title, VendorID, description, warrenty_period, category, inventory) VALUES (:title, :VendorID, :description, :warrenty_period, :category, :inventory)"), 
+              {'title': title, 'VendorID': VendorID, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'inventory': inventory})
+                        return render_template('add_product.html')
                     
+                    # product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
+                    # conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
                     
-                    product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
-                    conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
-                    return redirect('url_for(new_products)')
         else:
             return 'Unauthorized access. You must be either a Vendor or an Admin to post products.'
     else:
@@ -176,7 +178,6 @@ def edit_products():
     if request.method == 'POST':
         product_id = request.form.get('product_id')
         sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
-        colors_str = ', '.join(colors)
         conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warrenty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
         conn.commit()
         edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
