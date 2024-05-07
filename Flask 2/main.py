@@ -46,6 +46,16 @@ def login_page():
 
     # Render the login page if the login attempt failed or if the method was not POST
     return render_template('login.html')
+@app.route('/messages', methods=['GET'])
+def message():
+    return render_template('chat.html')
+
+@app.route('/messages', methods=['POST'])
+def messages():
+    message = request.form.get('message')
+    account_id = session.get('account_id')
+    return jsonify({'account_id': account_id, 'message': message})
+
 
 # Login & logout
 # @app.route('/login', methods=['GET', 'POST'])
@@ -137,13 +147,15 @@ def post_products():
         
         user_data = account.fetchone()
         print(user_data[-1])
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
                     title = request.form['title']
                     description = request.form['description']
                     warrenty_period = request.form['warrenty_period']
                     VendorID = request.form['VendorID']
                     category = request.form['category']
                     inventory = request.form['inventory']
+                    colors = ['Red', 'Green', 'Blue', 'Yellow']
+                    colors_str = ', '.join(colors) 
                     if(title == "" or description == "" or category == ""):
                         session['create_product_error'] = 'Fields are empty!'
                         return render_template('add.product.html')
