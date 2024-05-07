@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/header.css">
-    <title>BASE</title>
+
 </head>
 <style>
 body {
@@ -415,7 +415,15 @@ h1, h2, h3, h4, h5, h6 {
    </div>
 </footer>
 <script>
-    
+ function generate(){
+    var result = '';
+
+    result += document.getElementsByClassName('drop').value + ' - ';
+    result += document.getElementById('text2').value;
+
+	document.getElementById('output').innerHTML = result;
+}
+generate();   
 
 function login() {
     let email = document.getElementById("email").value;

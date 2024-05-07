@@ -53,6 +53,23 @@
 {% block body %}
 <div class="body">
 <form action="/edit" method="POST">
+    <input type="text" name="product_id" placeholder="product id" class="input_field"> <br>
+    <input type="text" name="title" placeholder="new title" class="input_field"> <br>
+    <input type="text" name="description" placeholder="new description" class="input_field"> <br>
+    <input type="text" name="images" placeholder="new images" class="input_field"> <br>
+    <input type="text" name="warrenty_period" placeholder="new warrenty_period" class="input_field"> <br>
+    <input type="text" name="category" placeholder="new category" class="input_field"> <br>
+    <input type="text" name="colors" placeholder="new color" class="input_field"> <br>
+    <input type="text" name="sizes" placeholder="new sizes" class="input_field"> <br>
+    <input type="number" name="inventory" placeholder="new inventory" class="input_field"> <br>
+</form>
+  <div>
+      {{ search_info }}
+  </div>
+
+  
+
+
   <input type="text" name="title" placeholder="title" class="input_field"> <br>
   <input type="text" name="description" placeholder="description" class="input_field"> <br>
   <input type="text" name="images" placeholder="images" class="input_field"> <br>
@@ -82,6 +99,7 @@
   <input type="text" name="new_price" placeholder="new price" class="input_field"> <br>
   <input type="text" name="time" placeholder="length of time for discount " class="input_field"> 
 </form>
+
 
 <h2>All products that you as a {{session['type']}} can access</h2>
 {%for i in edit_products %}

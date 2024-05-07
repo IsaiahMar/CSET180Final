@@ -50,9 +50,6 @@ def login():
                 
         else:
             msg = 'Wrong username or password'
-    else:
-        msg = 'User does not exist'
-
     return render_template('my_account.html', loggedin = True, account = account)
 
 
@@ -121,29 +118,33 @@ def post_products():
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
         print(user_data[-1])
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
                     title = request.form['title']
                     description = request.form['description']
                     warrenty_period = request.form['warrenty_period']
+                    VendorID = request.form['VendorID']
                     category = request.form['category']
-                    quantity = request.form['quantity']
+                    inventory = request.form['inventory']
+                    colors = ['Red', 'Green', 'Blue', 'Yellow']
+                    colors_str = ', '.join(colors) 
                     if(title == "" or description == "" or category == ""):
                         session['create_product_error'] = 'Fields are empty!'
-                        return redirect(url_for('new_products'))
-                    duplicate_product = conn.execute(text(f'select * from product where VendorID In(:VendorID) and title in(:title)'))
+                        return render_template('add.product.html')
+                    duplicate_product = conn.execute(text('SELECT * FROM product WHERE VendorID = :VendorID AND title = :title'), 
+                                      {'VendorID': VendorID, 'title': title}).fetchall()
                     if len(duplicate_product) > 0:
                         session['create_product_error'] = 'This already exists!'
-                        return redirect(url_for('new_products'))
+                        return render_template('add_product.html')
                         
                     else:
                         print("Not a duplicate")
                         conn.execute(text("INSERT INTO product (title, VendorID, description, images, warrenty_period, category, inventory, price) VALUES (:title, :VendorID :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory, :price)"), 
               {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'quantity': quantity, 'price': price})
+
                     
+                    # product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
+                    # conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
                     
-                    product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
-                    conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
-                    return redirect('url_for(new_products)')
         else:
             return 'Unauthorized access. You must be either a Vendor or an Admin to post products.'
     else:
@@ -160,7 +161,6 @@ def edit_products():
     if request.method == 'POST':
         product_id = request.form.get('product_id')
         sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
-        colors_str = ', '.join(colors)
         conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warrenty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
         conn.commit()
         edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
