@@ -1,14 +1,15 @@
+
 .body {
     cursor: auto;
   }
   
   .barItem {
     list-style-type: none;
-    display: flex; /* Change display to flex */
-    justify-content: space-between; /* Adjust alignment */
-    align-items: center; /* Adjust alignment */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
     width: 100%;
-    background-color: #faf9f7; /* Move background color here */
+    background-color: #faf9f7; 
     padding: 10px;
   }
   
@@ -17,7 +18,7 @@
   }
   
   header li {
-    display: inline-block; /* Change from float: left */
+    display: inline-block;
     padding-left: 8px;
     padding-right: 8px;
   }
@@ -80,13 +81,13 @@
     text-align: center;
   }
   
+
   header a{
     text-decoration:none;
     color:black;
     display:inline-block;
   }
   
-  /* FOOTER */
   
   *, *:before, *:after {
     box-sizing: border-box;
@@ -225,4 +226,87 @@
     .footer__nav {
       flex: 2 0px;
     }
+  } */
+  
+  
+  #sidebar-multi-level-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    width: 16rem; 
+    height: 100vh;
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
   }
+  
+  #sidebar-multi-level-sidebar.show {
+    transform: translateX(0);
+  }
+  
+  #sidebar-multi-level-sidebar .h-full {
+    padding: 1rem; /* Adjust padding as needed */
+    overflow-y: auto;
+    background-color: #f9fafb; /* Change to desired background color */
+  }
+  path {
+    height: 10px;
+  }
+  
+  #sidebar-multi-level-sidebar ul {
+    padding-left: 0;
+    margin-top: 0;
+  }
+  
+  #sidebar-multi-level-sidebar li {
+    list-style: none;
+  }
+  
+  #sidebar-multi-level-sidebar a {
+    display: block;
+    padding: 0.75rem 1rem; /* Adjust padding as needed */
+    color: #4b5563; /* Change to desired text color */
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  #sidebar-multi-level-sidebar a:hover {
+    background-color: #e5e7eb; /* Change to desired hover background color */
+  }
+  
+  /* Main Content */
+  
+  .p-4 {
+    padding: 1rem; /* Adjust padding as needed */
+  }
+  
+  .border-2 {
+    border-width: 2px; /* Adjust border width as needed */
+  }
+  
+  .border-gray-200 {
+    border-color: #e5e7eb; /* Change to desired border color */
+  }
+  
+  .border-dashed {
+    border-style: dashed; /* Change to desired border style */
+  }
+  
+  .rounded-lg {
+    border-radius: 0.5rem; /* Adjust border radius as needed */
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem; /* Adjust margin as needed */
+  }
+  
+  /* Customize other elements as needed */
+  
+  /* End of CSS */
+  
+  
+  @import 'tailwindcss/base';
+  @import 'tailwindcss/components';
+  @import 'tailwindcss/utilities';
+  
+  @tailwind base;

@@ -69,6 +69,7 @@
 
   
 
+
   <input type="text" name="title" placeholder="title" class="input_field"> <br>
   <input type="text" name="description" placeholder="description" class="input_field"> <br>
   <input type="text" name="images" placeholder="images" class="input_field"> <br>
@@ -92,8 +93,12 @@
   <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
   <input type="submit" value="Submit" class="input_submit">
 </form>
-  <div>
-      {{ search_info }}
+  
+<form action="/disount">
+  <input type="text" name="old_price" placeholder="old price" class="input_field"> <br>
+  <input type="text" name="new_price" placeholder="new price" class="input_field"> <br>
+  <input type="text" name="time" placeholder="length of time for discount " class="input_field"> 
+</form>
 
 
 <h2>All products that you as a {{session['type']}} can access</h2>

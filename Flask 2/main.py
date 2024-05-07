@@ -5,86 +5,52 @@ from random import randint
 
 
 app = Flask(__name__)
-conn_str = 'mysql://root:IMatornado$2023@/180final'
+conn_str = 'mysql://root:Cookiebear1@/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
 
-
 # Home page
 @app.route('/', methods=['GET'])
 def homepage():
-    return render_template('base.html')
-@app.route('/login_page', methods=['GET', 'POST'])
-def login_page():
+    return render_template('home.html')
+
+# Login & logout
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        account = conn.execute(text("SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
         user_data = account.fetchone()
-
-        if user_data:
+    
+        if user_data and username == user_data[4] and password == user_data[5]:
             if user_data[6] == "admin":
                 session['loggedin'] = True
                 session['type'] = "admin"
                 session['username'] = user_data[4]
-                return render_template('my_account.html', loggedIn=session['loggedin'])
-            
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
                 session['type'] = "vendor"
-            elif password == user_data[5]:
-                session['loggedin'] = True
                 session['username'] = user_data[4]
-                session['Name'] = f"{user_data[1]} {user_data[2]}"
-            else:
-                msg = 'Wrong password'
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
+            elif user_data[6] == "customer":
+                session['loggedin'] = True
+                session['username'] = user_data[4] 
+                session['type'] = "customer"
+                session['username'] = user_data[4]
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
+                
         else:
-            msg = 'User does not exist'
-    else:
-        msg = 'Method not allowed'
-
-    # Render the login page if the login attempt failed or if the method was not POST
-    return render_template('login.html')
-@app.route('/messages', methods=['GET'])
-def message():
-    return render_template('chat.html')
-
-@app.route('/messages', methods=['POST'])
-def messages():
-    message = request.form.get('message')
-    account_id = session.get('account_id')
-    return jsonify({'account_id': account_id, 'message': message})
-
-
-# Login & logout
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         username = request.form.get('username')
-#         password = request.form.get('password')
-#         account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
-#         user_data = account.fetchone()
-        
-
-#         if user_data:
-#             if user_data[6] == "admin":
-#                 session['loggedin'] = True
-#                 session['type'] = "admin"
-#             elif user_data[6] == "vendor":
-#                 session['loggedin'] = True
-#                 session['type'] = "vendor"
-#             elif password == user_data[5]:
-#                 session['loggedin'] = True
-#                 session['username'] = user_data[4] 
-#                 session['Name'] = f"{user_data[1]} {user_data[2]}"
-#         else:
-#             msg = 'Wrong username or password'
-#     else:
-#         msg = 'User does not exist'
-
-#     return render_template('my_account.html')
-
+            msg = 'Wrong username or password'
+    return render_template('my_account.html', loggedin = True, account = account)
 
 
 
@@ -108,7 +74,13 @@ def admin_home():
 @app.route('/my_account', methods= ['get', 'post'])
 def my_account_page():
     if 'username' in session:
-        return render_template('my_account.html', username = session['username'])
+        username = session['username']
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+        user_data = account.fetchone()
+        session['username'] = user_data[4]
+        info = conn.execute(text('select * from account where username = username')), {'username': username}
+        print(info)
+        return render_template('my_account.html', info = info)
     else:
         return render_template('my_account.html')
     
@@ -144,7 +116,6 @@ def new_products():
 def post_products():
     if 'type' in session :
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
-        
         user_data = account.fetchone()
         print(user_data[-1])
         if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'Admin'):
@@ -167,9 +138,9 @@ def post_products():
                         
                     else:
                         print("Not a duplicate")
-                        conn.execute(text("INSERT INTO product (title, VendorID, description, warrenty_period, category, inventory) VALUES (:title, :VendorID, :description, :warrenty_period, :category, :inventory)"), 
-              {'title': title, 'VendorID': VendorID, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'inventory': inventory})
-                        return render_template('add_product.html')
+                        conn.execute(text("INSERT INTO product (title, VendorID, description, images, warrenty_period, category, inventory, price) VALUES (:title, :VendorID :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory, :price)"), 
+              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'quantity': quantity, 'price': price})
+
                     
                     # product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
                     # conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
@@ -242,28 +213,31 @@ def show_product_page():
         if request.method == 'GET':
             products = conn.execute(text('select * from product'))
             return render_template('show_product.html', products = products)
-            # if request.method == 'POST':
-
-
-
+        if request.method == 'POST':
+            clicked_product_id = request.form['clicked_product_id']
+            return render_template('individual_page.html', clicked_product_id = clicked_product_id)
+            
 # search
 @app.route('/search', methods=["POST", "GET"])
 def search():
     if request.method == 'POST':
         product_search = request.form['product_search']
-        type = session[6]
-        products = (text("SELECT * FROM account WHERE username LIKE :product_search and " ), {'product_search': f"%{product_search}%"})
+        products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search"), {'product_search': f"%{product_search}%"})
         if product_search != products:
             return render_template("show_product.html", products=products)  
-        # else: 
-        #     products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search"), {'product_search': f"%{product_search}%"})
         return render_template("show_product.html", products=products)
- 
-
-        # products = conn.execute(text("SELECT * FROM account WHERE account_id LIKE :product_search"), {'product_search': f"%{product_search}%"})
-        # or description LIKE '%:product_search%' or description LIKE '%:product_search%'
-       
         
+@app.route('/individual', methods=["POST", "GET"])
+def individual():
+    if request.method == 'GET':
+        clicked_product_id = clicked_product_id
+        print(clicked_product_id)
+        individual_products = conn.execute(text('select * from product where product_id = product_id'), {'product_id' : clicked_product_id})
+        price = conn.execute(text('select * from price where product_id = product_id '), {'product_id' : clicked_product_id})
+        return render_template('individual_page.html', individual_products = individual_products, price = price)
+    if request.method == 'POST':
+        return render_template('individual_page.html')
+ 
 
 
 if __name__ == '__main__':

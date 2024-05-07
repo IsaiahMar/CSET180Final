@@ -2,6 +2,8 @@
 .body{
     margin-left: 50px;
     margin-right: 50px;
+    font-family: Arial, Helvetica, sans-serif ;
+    font-size: larger;
 }
 /* class inputs */
 .input_field {
@@ -33,6 +35,7 @@
 
 }
 .products{
+    position: relative;
     border: solid 1px;
     border-radius: 25px;
     margin: 20px;
@@ -97,66 +100,85 @@ img{
     object-fit: cover ;
     overflow: hidden;
 }
+.test {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 50px;
+}
+
 
 </style>
 {%extends "base.html"%}
 {%block body%}
-    <div class="body">
-        <div class="search">
-            <form  action="/search" method="POST">
-                <input type="text" name="product_search" placeholder="search for a product, or vendor" class="input_field"> <br>
-                <input type="submit" value="Submit" class="input_submit">
-            </form>
-        </div>
+<div class="body">
+    <div class="search">
+        <form  action="/search" method="POST">
+            <input type="text" name="product_search" placeholder="search for a product, or vendor" class="input_field"> <br>
+            <input type="submit" value="Submit" class="input_submit">
+        </form>         
+    </div>
+        <!-- <div class="test">
+            <Span>A</Span>
+            <Span>B</Span>
+            <Span>C</Span>
+            <Span>D</Span>
+            <Span>E</Span>
+        </div> -->
     {%for i in products %}
-        <div class="products">
+
+    <div class="products">
+        <ul>
+            <div class="first">
+            <li>Item Name: {{i[1]}}</li>
             <ul>
-                <li>Item Name: {{i[1]}}</li>
-                <ul>
-                    <li>Item description: {{i[2]}}</li>
-                    <!-- will need to be able to show and add multiple images -->
-                    <li><img src={{i[3]}} alt="no images selected">
-                    </li>
-                    <li>warrenty_period: {{i[4]}}</li>
-                    <li>category: 
-                        <!-- <div class="dropdown">
+                <li>Item description: {{i[2]}}</li>
+                <!-- will need to be able to show and add multiple images -->
+                <li><img src={{i[3]}} alt="no images selected">
+                </li>
+                <li>warrenty_period: {{i[4]}}</li>
+                <li>category:  {{i[5]}}
+
+            
+            </div>
+            <div class="seconds">
+    
+                <li>colors:
+                    <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
-                        <a href= "select">select 1</a>
+                        <div class="dropdown-content">
+                        <a href="#">size 1</a>
                         <a href="#">size 2</a>
                         <a href="#">size 3</a>
-                        <div id="output"></div>  -->
-                        <!-- </div> -->
-                    </li>
-                    <li>colors
-                        <div class="dropdown">
+                    </div>
+                </div>
+                </li>
+                <li>sizes: 
+        <!-- will need to be able to show and add multiple images -->
+                    <div class="dropdown">
                         <button class="dropbtn">Dropdown</button>
                         <div class="dropdown-content">
                         <a href="#">size 1</a>
                         <a href="#">size 2</a>
                         <a href="#">size 3</a>
                         </div>
-                      </div></li>
-                    <li>sizes: 
-                        <!-- <div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                        <div class="dropdown-content">
-                        <a href="#">size 1</a>
-                        <a href="#">size 2</a>
-                        <a href="#">size 3</a>
-                        </div> -->
-                      <!-- </div> -->
-                    </li>
-                    <li>inventory left: {{i[8]}}</li>
-                    
-                    <form class="cart_button"  action="/add to cart" method="POST">
-                        <input type="submit" value="add to cart" class="input_submit">
-                    </form>
-                </ul>
+                    </div>
+                </li>
+                <li>inventory left: {{i[8]}}</li>
+                
+                <form class="cart_button"  action="/individual" method="POST">
+                    <input type="hidden " name="clicked_product_id" value="{{i[0]}}">
+                    <input type="submit" value="go to cart" class="input_submit">
+                </form>
             </ul>
+
         </div>
-    {%endfor%}
-    {{products}}
+        </ul>
     </div>
+</div>
+{%endfor%}
+  
+   
 {%endblock%}
 
 
