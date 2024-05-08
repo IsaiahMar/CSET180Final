@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify, flash
 from sqlalchemy import *
 from random import randint
 
@@ -116,34 +116,44 @@ def new_products():
 #Create Prodcuts
 
 @app.route('/create_products', methods=['POST'])
+
 def post_products():
-    if 'type' in session :
+    if 'type' in session:
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
-        print(user_data[-1])
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
-                    title = request.form['title']
-                    description = request.form['description']
-                    warrenty_period = request.form['warrenty_period']
-                    category = request.form['category']
-                    quantity = request.form['quantity']
-                    if(title == "" or description == "" or category == ""):
-                        session['create_product_error'] = 'Fields are empty!'
-                        return redirect(url_for('new_products'))
-                    duplicate_product = conn.execute(text(f'select * from product where VendorID In(:VendorID) and title in(:title)'))
-                    if len(duplicate_product) > 0:
-                        session['create_product_error'] = 'This already exists!'
-                        return redirect(url_for('new_products'))
-                        
-                    else:
-                        print("Not a duplicate")
-                        conn.execute(text("INSERT INTO product (title, VendorID, description, images, warrenty_period, category, inventory, price) VALUES (:title, :VendorID :description, :images, :warrenty_period, :category, :colors, :sizes, :inventory, :price)"), 
-              {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'quantity': quantity, 'price': price})
-                    
-                    
-                    product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
-                    conn.execute(text(f'Insert Into product_details ()from product where title = :title and VendorID = :VendorID'))
-                    return redirect('url_for(new_products)')
+
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
+            # Extract form data
+            title = request.form.get('title')
+            description = request.form.get('description')
+            warranty_period = request.form.get('warranty_period')
+            category = request.form.get('category')
+            price = request.form.get('price')
+            images = request.form.get('images')
+            sizes = request.form.get('sizes')
+            colors = request.form.get('colors')
+            inventory = request.form.get('inventory')
+            username = session['username']
+
+            # Check if required fields are present
+            if not all([title, description, category, price, inventory]):
+                flash('Please fill in all required fields', 'error')
+                return redirect(url_for('new_products'))
+
+            # Check for duplicate product
+            duplicate_product = conn.execute(text("SELECT * FROM product WHERE username = :username AND title = :title"), {'username': username, 'title': title}).fetchone()
+            if duplicate_product:
+                flash('This product already exists', 'error')
+                return redirect(url_for('new_products'))
+
+            # Insert product details into 'product' table
+            conn.execute(text("INSERT INTO product (title, username, description, images, warranty_period, category, colors, sizes, inventory, price) VALUES (:title, :username, :description, :images, :warranty_period, :category, :colors, :sizes, :inventory, :price)"), 
+                        {'title': title, 'description': description, 'warranty_period': warranty_period, 'images': images, 'colors': colors, 'sizes': sizes, 'category': category,  'username': username, 'inventory': inventory, 'price': price})
+            conn.commit()
+
+            # Insert price into 'price' table
+           
+            return render_template('add_product.html')
         else:
             return 'Unauthorized access. You must be either a Vendor or an Admin to post products.'
     else:
@@ -151,20 +161,52 @@ def post_products():
 
 
 #Edit has boat stuff, but shows on the page well
-@app.route('/edit', methods=['GET','POST'])
+@app.route('/edit', methods=['GET', 'POST'])
 def edit_products():
     if request.method == 'GET':
-        edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
-        return render_template('edit_product.html', edit_products=edit_products)
-    
-    if request.method == 'POST':
-        product_id = request.form.get('product_id')
-        sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
-        colors_str = ', '.join(colors)
-        conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warrenty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
-        conn.commit()
-        edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
-        return render_template('edit_product.html', edit_products=edit_products, sizes=sizes)
+        if 'type' in session:
+            if session['type'] == 'admin':
+                # Admin can see all products
+                edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+            elif session['type'] == 'vendor':
+                # Vendors can see only their products
+                username = session['username']
+                edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
+            else:
+                return 'Unauthorized access'
+
+            return render_template('edit_product.html', edit_products=edit_products)
+
+    elif request.method == 'POST':
+        if 'type' in session:
+            if session['type'] == 'admin':
+                # Admin can update any product
+                product_id = request.form.get('product_id')
+                sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
+                colors_str = ', '.join(colors)
+                conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warranty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
+                conn.commit()
+                flash('Product updated successfully', 'success')
+                edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+                return render_template('edit_product.html', edit_products=edit_products, sizes=sizes)
+            elif session['type'] == 'vendor':
+                # Vendors can update only their products
+                product_id = request.form.get('product_id')
+                username = session['username']
+                product = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id AND username = :username'), {'product_id': product_id, 'username': username}).fetchone()
+                if product:
+                    sizes = ['S', 'M', 'L', 'XL', 'XXL', '3XL']
+                    colors_str = ', '.join(colors)
+                    conn.execute(text("UPDATE product_details SET title=:title, description=:description, images=:images, warrenty_period=:warranty_period, category=:category, colors=:colors, sizes=:sizes, inventory=:inventory WHERE product_id=:product_id"), request.form)
+                    conn.commit()
+                    flash('Product updated successfully', 'success')
+                    edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
+                    return render_template('edit_product.html', edit_products=edit_products, sizes=sizes)
+                else:
+                    return 'Unauthorized access'
+        else:
+            return 'Unauthorized access'
+
     
 
 #delete products

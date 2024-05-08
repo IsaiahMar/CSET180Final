@@ -37,21 +37,17 @@
         <form action="/create_products" method="POST">
             <input type="text" name="title" placeholder="title" class="input_field"> <br>
             <input type="text area" name="description" placeholder="description" class="input_field"> <br>
-            <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
+            <input type="text" name="warranty_period" placeholder="warranty_period" class="input_field"> <br>
             <input type="text" name="category" placeholder="category" class="input_field"> <br>
             <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
-            <input type="text" name="image" placeholder="image" class="input_field"> <br>
-            <input type="text" name="color" placeholder="color" class="input_field"> <br>
-            <input type="text" name="size" placeholder="size" class="input_field"> <br>
-            <input type="text" name="quantity" placeholder="quantity" class="input_field"> <br>
+            <input type="text" name="images" placeholder="image" class="input_field"> <br>
+            <input type="text" name="colors" placeholder="color" class="input_field"> <br>
+            <input type="text" name="sizes" placeholder="size" class="input_field"> <br>
+            <input type="text" name="price" placeholder="price" class="input_field"> <br>
             <input type="submit" value="Submit" class="input_submit">
-            {% if prod_error%}
-            <p style="color: red;">{{ prod_error }}</p>
-            {%endif%}
         </form>
-        
-        </div>
-    </div>
+      </div>
+  </div>
 
 {% endblock %}
 
