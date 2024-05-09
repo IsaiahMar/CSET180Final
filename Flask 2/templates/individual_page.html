@@ -1,43 +1,93 @@
 {% extends "base.html"%}
 {% block body %}
 <style>
-      .pdp-wide__primary{
-        display: flex;
-      }
-      body{
-        font-family: Arial, Helvetica, sans-serif ;
-        font-size: larger;
-      }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+    }
 
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .product {
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .product img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .product-details h1 {
+        font-size: 24px;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .product-details ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-details ul li {
+        margin-bottom: 10px;
+    }
+
+    .product-details .btn {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .product-details .btn:hover {
+        background-color: #0056b3;
+    }
 </style>
-
-{%for i in products %}
-<div class="products">
-    <ul>
-        <li>Item Name: {{i[1]}}</li>
-        <ul>
-            <li>Item description: {{i[2]}}</li>
-            <!-- will need to be able to show and add multiple images -->
-            <li><img src={{i[3]}} alt="no images selected">
-            </li>
-            <li>warrenty_period: {{i[4]}}</li>
-            <li>category: {{i[5]}}</li>
-            <li>colors: {{i[6]}}</li>
-            <li>sizes: {{i[7]}}</li>
-            <li>inventory left: {{i[8]}}</li>
-        </ul>
-    </ul>
+<div class="container">
+    {% if products %}
+    {% for product in products %}
+    <div class="product">
+        <div class="product-images">
+            <img src="{{ product.image }}" alt="Product Image">
+            <!-- Additional product images or image gallery can be added here -->
+        </div>
+        <div class="product-details">
+            <h1>{{ product.title }}</h1>
+            <p class="product-description">{{ product.description }}</p>
+            <ul class="product-specs">
+                <li><strong>Warranty Period:</strong> {{ product.warranty_period }}</li>
+                <li><strong>Category:</strong> {{ product.category }}</li>
+                <!-- Add other product details as needed -->
+            </ul>
+            <div class="product-actions">
+                <button class="btn btn-primary">Add to Cart</button>
+                <!-- Additional actions such as favorite or share buttons can be added here -->
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No products found.</p>
+    {% endif %}
 </div>
-{%endfor%}
-{%for i in price %}
-<div class="price">
-    <ul>
-        <li>Old Price: {{i[0]}}</li>
-        <li>New Price: {{i[1]}}</li>
-    </ul>
-</div>
-{%endfor%}
-
 
 <div class="pdp-wide__wrapper" itemscope itemtype="http://schema.org/Product">
     <link href="http://www.productontology.org/id/Clothing" itemprop="additionalType">

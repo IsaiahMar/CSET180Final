@@ -1,1 +1,70 @@
-{%extends 'base.html'%}
+
+<style>
+    .body{
+        margin-left: 32%;
+        justify-content: center;
+        text-align: center;
+        max-width: 35%;
+    }
+    .input_field {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      min-width: 100%;
+    }
+
+    .input_submit {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .input_submit:hover {
+      background-color: #45a049;
+    }
+</style>
+
+{% extends 'base.html' %}
+
+{% block body %}
+    <h1>This is the create product page</h1>
+    <div class="body">
+      <div class="p-4 sm:ml-64">
+        <form action="/create_products" method="POST">
+            <input type="text" name="title" placeholder="title" class="input_field"> <br>
+            <textarea name="description" placeholder="description" class="input_field"></textarea> <br>
+            <input type="text" name="warranty_period" placeholder="warranty_period" class="input_field"> <br>
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                <option value="Animals">Animals</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Fruits and vegetables">Fruits and vegetables</option>
+                <option value="Sports">Sports</option>
+                <option value="Plants">Plants</option>
+                <option value="Jewelry">Jewelry</option>
+                <option value="Letters and numbers">Letters and numbers</option>
+                <option value="Insects and mammals">Insects and mammals</option>
+                <option value="Planets">Planets</option>
+        
+            </select>
+        
+            <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
+            <textarea name="images" placeholder="images" class="input_field"></textarea> <br>
+            <input type="text" name="colors" placeholder="color" class="input_field"> <br>
+            <input type="text" name="sizes" placeholder="size" class="input_field"> <br>
+            <input type="text" name="price" placeholder="price" class="input_field"> <br>
+            <input type="submit" value="Submit" class="input_submit">
+        </form>
+      </div>
+  </div>
+
+{% endblock %}
