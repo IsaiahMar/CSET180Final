@@ -6,9 +6,6 @@
     <h1>This is the accounts page. You are logged in.</p>
     <h1>Welcome, {{ session['username'] }}</h3>
     <h1>You are a {{ session['type'] }}</h3> 
-{%else%}
-    <h1>This is the accounts page. You are NOT logged in.</p>
-    <h1>please loggin after signing up in the register page</h3>
-
+{% else %}
 {% endif %}
 {% endblock %}

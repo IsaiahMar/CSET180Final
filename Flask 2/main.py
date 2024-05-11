@@ -15,37 +15,43 @@ app.secret_key = 'secret key'
 @app.route('/', methods=['GET'])
 def homepage():
     return render_template('base.html')
-@app.route('/login_page', methods=['GET', 'POST'])
-def login_page():
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        account = conn.execute(text("SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
         user_data = account.fetchone()
-
-        if user_data:
+    
+        if user_data and username == user_data[4] and password == user_data[5]:
             if user_data[6] == "admin":
                 session['loggedin'] = True
                 session['type'] = "admin"
                 session['username'] = user_data[4]
-                return render_template('my_account.html', loggedIn=session['loggedin'])
-            
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
             elif user_data[6] == "vendor":
                 session['loggedin'] = True
                 session['type'] = "vendor"
-            elif password == user_data[5]:
-                session['loggedin'] = True
                 session['username'] = user_data[4]
-                session['Name'] = f"{user_data[1]} {user_data[2]}"
-            else:
-                msg = 'Wrong password'
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
+            elif user_data[6] == "customer":
+                session['loggedin'] = True
+                session['username'] = user_data[4] 
+                session['type'] = "customer"
+                session['username'] = user_data[4]
+                session['first'] = user_data[1]
+                session['last'] = user_data[2]
+                session ['email'] = user_data[3]
+                
         else:
-            msg = 'User does not exist'
-    else:
-        msg = 'Method not allowed'
-
-    # Render the login page if the login attempt failed or if the method was not POST
-    return render_template('login.html')
+            msg = 'Wrong username or password'
+    return render_template('my_account.html', loggedin = True, account = account)
+  
 @app.route('/messages', methods=['GET'])
 def message():
     return render_template('chat.html')
@@ -169,6 +175,7 @@ def post_products():
                         print("Not a duplicate")
                         conn.execute(text("INSERT INTO product (title, VendorID, description, warrenty_period, category, inventory) VALUES (:title, :VendorID, :description, :warrenty_period, :category, :inventory)"), 
               {'title': title, 'VendorID': VendorID, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'inventory': inventory})
+                        conn.commit()
                         return render_template('add_product.html')
                     
                     # product_select = conn.execute(text(f'select product_id from product where title = :title and VendorID = :VendorID'))
@@ -201,39 +208,40 @@ def edit_products():
 
 @app.route('/delete_product', methods=["GET"])
 def delete_return():
-   if request.method == 'GET':
-    username = session.get('username')  # Retrieve username from session
+    username = session.get('username') 
+    title = request.form.get('title')
     account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': username})
     user_data = account.fetchone()
     
     if user_data:
         user_type = user_data[6] 
         if user_type == 'vendor' and username == user_data[1]: 
-            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
-            return render_template('delete.html', edit_products=edit_products)
+            delete_products = conn.execute(text('SELECT * FROM product WHERE title = :title'), {'title': title})
+            return render_template('delete.html', delete_products=delete_products)
         elif user_type == 'admin':
             edit_products = conn.execute(text('SELECT * FROM product'))
-            return render_template('delete.html', edit_products=edit_products)
+            return render_template('delete.html', delete_products=delete_products)
     return "Unauthorized access"
    
 @app.route('/delete_product', methods=["POST"])
 def delete_return_post():
     if request.method == 'POST':
-        username = session.get('username')  # Retrieve username from session
+        username = session.get('username')
+        product_id = request.form.get('product_id')# Retrieve username from session
     account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': username})
     user_data = account.fetchone()
     
     if user_data:
         user_type = user_data[6] 
-        if user_type == 'vendor' and username == user_data[1]: 
-            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
+        if user_type == 'Vendor' and username == user_data[1]: 
+            edit_products = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': product_id})
             # sear = conn.execute(text("SELECT * FROM product WHERE product_id = :product_id"), request.form).all()
             conn.execute(text("DELETE FROM product WHERE product_id = :product_id"), request.form)
             conn.commit()
             edit_products = conn.execute(text('SELECT * FROM product'))
             return render_template('delete.html', edit_products=edit_products)
         elif user_data[6] == 'admin':
-            edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
+            edit_products = conn.execute(text('SELECT * FROM product WHERE product_id =  :product_id'),  {'product_id': product_id})
             return render_template('delete.html', edit_products=edit_products)
 
 #display products
@@ -244,7 +252,22 @@ def show_product_page():
             return render_template('show_product.html', products = products)
             # if request.method == 'POST':
 
+@app.route('/cart', methods=['GET'])
+def cart():
+    return render_template('cart.html')
 
+@app.route('/cart', methods=['POST'])
+def addToCart():
+    item = request.json['item']
+    parent_element = item.get('parentNode')
+    item_name = parent_element.get('children')[0].get('textContent')
+    item_price = parent_element.get('children')[2].get('textContent')
+
+    if item_name in cart:
+        return jsonify({'message': f"{item} is already in the cart!"}), 400
+    else:
+        cart[item_name] = {'price': item_price, 'quantity': 1}
+        return jsonify({'message': f"{item} is added to the cart!"}), 200
 
 # search
 @app.route('/search', methods=["POST", "GET"])

@@ -111,9 +111,9 @@ img{
     {%for i in products %}
         <div class="products">
             <ul>
-                <li>Item Name: {{i[1]}}</li>
+                <li>Item Name: {{i[2]}}</li>
                 <ul>
-                    <li>Item description: {{i[2]}}</li>
+                    <li>Item description: {{i[4]}}</li>
                     <!-- will need to be able to show and add multiple images -->
                     <li><img src={{i[3]}} alt="no images selected">
                     </li>
@@ -148,7 +148,7 @@ img{
                     </li>
                     <li>inventory left: {{i[8]}}</li>
                     
-                    <form class="cart_button"  action="/add to cart" method="POST">
+                    <form class="cart_button"  action="/cart" method="POST">
                         <input type="submit" value="add to cart" class="input_submit">
                     </form>
                 </ul>

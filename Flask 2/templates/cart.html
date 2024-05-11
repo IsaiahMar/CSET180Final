@@ -1,1 +1,32 @@
 {%extends 'base.html'%}
+<section id="cart">
+    <br><br>
+    <div id="cart-header">
+        <h1 style="color: white;">~ Cart Order ~</h1>
+    </div>
+    <div class="cart-row">
+        <span class="cart-item cart-header cart-column">ITEM</span>
+        <span class="cart-price cart-header cart-column" style="font-family: glass antiqua; color: white;">PRICE PER ITEM</span>
+        <span class="cart-quantity cart-header cart-column">QUANTITY</span>
+    </div>
+    <br><br>
+    <div class="cart-items" style="font-family: glass antiqua; color: white;">
+
+    </div>
+
+    <div class="cart-total">
+        <strong class="cart-total-title" style="font-family: glass antiqua; color: white;">Sub-Total</strong>
+        <span class="cart-total-price" style="font-family: glass antiqua; color: white;">$0.00</span>
+    </div>
+    <br>
+
+
+
+    <div class="buttons">
+        <div id="clear"><button onclick="clearCart()">Clear Order</button></div>
+        <div id="checkout"><button onclick="purchaseProducts()">Purchase Order</button></div>
+    </div>
+    </div>
+    <br>
+    <button onclick="customerLogout()">Logout</button>
+</section>
