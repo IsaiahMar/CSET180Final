@@ -351,7 +351,7 @@ def delete_return():
             return render_template('delete.html', edit_products=edit_products)
         elif user_type == 'admin':
             edit_products = conn.execute(text('SELECT * FROM product'))
-            return render_template('delete.html', delete_products=delete_products)
+            return render_template('delete.html')
     return "Unauthorized access"
    
 @app.route('/delete_product', methods=["POST"])
