@@ -1,7 +1,10 @@
+
 <style>
 .body{
     margin-left: 50px;
     margin-right: 50px;
+    font-family: Arial, Helvetica, sans-serif ;
+    font-size: larger;
 }
 /* class inputs */
 .input_field {
@@ -18,10 +21,10 @@
     width: 100%;
     background-color: #4CAF50;
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+    padding: 6px 10px;
+    margin: 5px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -33,11 +36,15 @@
 
 }
 .products{
+    position: relative;
     border: solid 1px;
     border-radius: 25px;
     margin: 20px;
     list-style-type: none;
     background-color: rgb(217, 216, 216);
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around
 }
 ul {
     list-style-type: none;
@@ -97,113 +104,148 @@ img{
     object-fit: cover ;
     overflow: hidden;
 }
+.test {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 50px;
+}
+.go_to_cart{
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.search{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding: 5px;
+    width: 100%;
+}
+.search_bar{
+    justify-items: stretch;
+    width: 50%;
+}
+select{
+   
+}
+
 
 </style>
 {%extends "base.html"%}
 {%block body%}
-    <div class="body">
-        <div class="search">
-            <form  action="/search" method="POST">
-                <input type="text" name="product_search" placeholder="search for a product, or vendor" class="input_field"> <br>
-                <input type="submit" value="Submit" class="input_submit">
-            </form>
-        </div>
-    {%for i in products %}
-        <div class="products">
-            <ul>
-                <li>Item Name: {{i[2]}}</li>
-                <ul>
-                    <li>Item description: {{i[4]}}</li>
-                    <!-- will need to be able to show and add multiple images -->
-                    <li><img src={{i[3]}} alt="no images selected">
-                    </li>
-                    <li>warrenty_period: {{i[4]}}</li>
-                    <li>category: 
-                        <!-- <div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                        <a href= "select">select 1</a>
-                        <a href="#">size 2</a>
-                        <a href="#">size 3</a>
-                        <div id="output"></div>  -->
-                        <!-- </div> -->
-                    </li>
-                    <li>colors
-                        <div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                        <div class="dropdown-content">
-                        <a href="#">size 1</a>
-                        <a href="#">size 2</a>
-                        <a href="#">size 3</a>
-                        </div>
-                      </div></li>
-                    <li>sizes: 
-                        <!-- <div class="dropdown">
-                        <button class="dropbtn">Dropdown</button>
-                        <div class="dropdown-content">
-                        <a href="#">size 1</a>
-                        <a href="#">size 2</a>
-                        <a href="#">size 3</a>
-                        </div> -->
-                      <!-- </div> -->
-                    </li>
-                    <li>inventory left: {{i[8]}}</li>
-                    
-                    <form class="cart_button"  action="/cart" method="POST">
-                        <input type="submit" value="add to cart" class="input_submit">
-                    </form>
-                </ul>
-            </ul>
-        </div>
-    {%endfor%}
-    {{products}}
+<div class="body">
+    <div class="search">
+        <form class="search_bar" action="/search" method="POST">
+            <input type="text" name="product_search" placeholder="search for a product title, vendor or description" class="input_field"> <br>
+            <div id="products-list"></div>
+            <input type="submit" value="search" class="input_submit">
+            <input type="submit" value="reset serach" class="input_submit">
+
+        </form> 
+        <form action="/categories" method="POST">
+            Filter categories:
+            <select name="category" id="category">
+                <option value="Animals">Animals</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Fruits and vegetables">Fruits and vegetables</option>
+                <option value="Sports">Sports</option>
+                <option value="Plants">Plants</option>
+                <option value="Jewelry">Jewelry</option>
+                <option value="Letters and numbers">Letters and numbers</option>
+                <option value="Insects and mammals">Insects and mammals</option>
+                <option value="Planets">Planets</option>
+               
+            </select>
+            <input type="submit" value="search" class="input_submit">
+        </form>    
+ 
+        <form action="/sizes" method="POST">
+            Filter sizes:
+            <select name="sizes" id="sizes">
+                
+                <option value="extra_small">Extra Small</option>
+                <option value="Small">Small</option>
+                <option value="Meidum">Meidum</option>
+                <option value="Large">Large</option>
+                <option value="1Xl">1XL</option>
+                <option value="2Xl">2XL</option>
+                <option value="3Xl">3XL</option>
+              
+            </select>
+            <input type="submit" value="search" class="input_submit">
+
+        
+        </form>
+        <form action="/colors" method="POST">
+            Filter colors:
+            <select name="colors" id="colors">
+                <option value="Blue">Black</option>
+                <option value="Blue">Red</option>
+                <option value="Blue">Blue</option>
+                <option value="Green">Green</option>
+                <option value="Orange">Orange</option>
+                <option value="Blue">Pink</option>
+            </select>
+            <input type="submit" value="search" class="input_submit">
+
+        
+        </form>  
     </div>
+    {% for product in products %}
+<div class="flex products">
+    <ul>
+        <li>Item Name: {{ product[1] }}</li>
+        <li>Item Description: {{ product[2] }}</li>
+        <!-- You can add logic here to display multiple images -->
+    
+        <li>
+          
+            {% for image in images %}
+                {% if image.product_id == product[0] %}
+                    <img src="{{ image.image }}" alt="No images selected">
+                {% endif %}
+            {% endfor %}
+        </li>
+        <li>Warranty Period: {{ product[3] }}</li>
+        <li>Category: {{ product[4] }}</li>
+        <li>
+            Sizes:
+            <select name="sizes" id="sizes">
+                {% for size in sizes %}
+                {% if size.product_id == product[0] %}
+                <option value="{{ size.size }}">{{ size.size }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </li>
+        <li>
+            Colors:
+            <select name="colors" id="colors">
+                {% for color in colors %}
+                {% if color.product_id == product[0] %}
+                <option value="{{ color.color }}">{{ color.color }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </li>
+        <li>Inventory Left: {{ product[5] }}</li>
+        <li>Creator {{ product[6] }}</li>
+        {% if price %}
+        <li>Current Price: {{ price[0] }}</li>
+        <li style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</li>
+        <li>Time Remaining: {{ price[3] }}</li>
+
+        {% endif %}
+        <form class="cart_button" action="/individual" method="POST">
+            <input type="hidden" name="clicked_product_id" value="{{ product.product_id }}">
+            <input type="submit" value="Go to Cart" class="go_to_cart">
+        </form>        
+    </ul>
+</div>
+{% endfor %}
 {%endblock%}
-
-
-
-<script>
-        const select = document.createElement('select');
-        select.id = 'select';
-
-        // Create select options
-        const option1 = document.createElement('option');
-        option1.value = '1';
-        option1.textContent = 'Option 1';
-        select.appendChild(option1);
-
-        const option2 = document.createElement('option');
-        option2.value = '2';
-        option2.textContent = 'Option 2';
-        select.appendChild(option2);
-
-        const option3 = document.createElement('option');
-        option3.value = '3';
-        option3.textContent = 'Option 3';
-        select.appendChild(option3);
-
-        // Append the select tag to the dropdown-content div
-        document.querySelector('.dropdown-content').appendChild(select);
-
-        // Create an empty DOM with an id to display the output.
-        const output = document.querySelector('#output');
-
-        // Create a button element for the user to click and see the option selected.
-        const button = document.createElement('button');
-        button.textContent = 'Show Selected';
-        document.querySelector('.dropdown-content').appendChild(button);
-
-        // Add an event listener to the select tag to listen for the change event.
-        select.addEventListener('change', function() {
-            // Get the selected option from the select tag.
-            const selectedOption = select.options[select.selectedIndex];
-
-            // Display the selected option in the empty DOM.
-            output.innerHTML = selectedOption.text;
-        });
-
-        // When the user clicks the button, display the selected option in the output DOM.
-        button.addEventListener('click', function() {
-            output.innerHTML = select.options[select.selectedIndex].text;
-        });
-    </script>
-

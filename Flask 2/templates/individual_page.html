@@ -1,0 +1,139 @@
+{% extends "base.html"%}
+{% block body %}
+<style>
+     body {
+        color: black;
+        font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 24px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; } h3 { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; } p { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } blockquote { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; } pre { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+
+    }
+
+    * {
+        font-size: medium;
+    }
+
+    .container {
+        max-width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .products {
+        flex-basis: 48%;
+        text-align: center;
+    }
+
+    .price {
+        text-align: center;
+    }
+
+    .add_cart {
+        max-width: fit-content;
+        text-align: center;
+    }
+
+    .add_cart {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .add_cart:hover {
+      background-color: #45a049;
+    }
+    
+    select {
+        max-width: fit-content;
+    }
+
+    .images {
+        flex-basis: 48%;
+        max-width: 400px;
+        max-height: 400px;
+        min-width: 200px;
+        min-height: 200px;
+        display: block;
+        margin-top: 5px;
+        margin-left: 20px;
+    }
+
+    .images img {
+        margin: 5px;        
+        width: 300px;
+        height: 300px;
+    }
+   .new_footer_top{
+    width: 100%;
+   }
+
+</style>
+{% if products %}
+<div class="container"><div>
+    {% for image in images %}
+        <img class="images" src="{{ image.image }}" alt="No images selected">
+    {% endfor %}
+    
+</div>
+    <div class="products">
+        <h1 style="font-weight: 600; font-size: larger;">{{ products[1] }}</h1>
+        <hr>
+        {% if price %}
+        <ul>
+            <h2>Current Price: {{ price[0] }}</h2>
+            <h2 style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</h2>
+            <h2>Time Remaining: {{ price[3] }}</h2>
+        </ul>
+        {% endif %}
+        <hr>
+        <h1>{{ products[2] }}</h1>
+        <h1>Warranty Period: {{ products[3] }}</h1>
+        <h1>Category: {{ products[4] }}</h1>
+        <h1>Inventory: {{ products[5] }}</h1>
+        <h1>Creator: {{ products[6] }}</h1>
+
+        <h1>
+            Sizes:
+            <select name="sizes" id="sizes">
+                {% for size in sizes %}
+                    <option value="{{ size.size }}">{{ size.size }}</option>
+                {% endfor %}
+            </select>
+        </h1>
+        <h1>
+            Colors:
+            <select name="colors" id="colors">
+                {% for color in colors %}
+                    <option value="{{ color.color }}">{{ color.color }}</option>
+                {% endfor %}
+            </select>
+        </h1>
+    
+    
+    {% else %}
+        <p>No products found.</p>
+    {% endif %}
+    <form class="add_cart_form" style="text-align: center;" action="/individual" method="POST">
+        <input type="hidden" name="clicked_product_id" value="{{ products[0] }}">
+        <input type="submit" value="Add to Cart" class="add_cart">
+    </form> 
+</div>
+<div>
+
+</div> 
+
+
+{% endblock %}

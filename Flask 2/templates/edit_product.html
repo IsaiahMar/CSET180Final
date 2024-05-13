@@ -1,7 +1,10 @@
 <style>
   .body{
       margin: auto;
+      max-width: 50%;
   }
+  
+
   .input_field {
     width: 100%;
     padding: 12px 20px;
@@ -53,47 +56,38 @@
 {% block body %}
 <div class="body">
 <form action="/edit" method="POST">
-    <input type="text" name="product_id" placeholder="product id" class="input_field"> <br>
-    <input type="text" name="title" placeholder="new title" class="input_field"> <br>
-    <input type="text" name="description" placeholder="new description" class="input_field"> <br>
-    <input type="text" name="images" placeholder="new images" class="input_field"> <br>
-    <input type="text" name="warrenty_period" placeholder="new warrenty_period" class="input_field"> <br>
-    <input type="text" name="category" placeholder="new category" class="input_field"> <br>
-    <input type="text" name="colors" placeholder="new color" class="input_field"> <br>
-    <input type="text" name="sizes" placeholder="new sizes" class="input_field"> <br>
-    <input type="number" name="inventory" placeholder="new inventory" class="input_field"> <br>
-</form>
-  <div>
-      {{ search_info }}
-  </div>
-
-  
-
+  <input type="text" name="product_id" placeholder="product_id" class="input_field"> <br>
   <input type="text" name="title" placeholder="title" class="input_field"> <br>
   <input type="text" name="description" placeholder="description" class="input_field"> <br>
   <input type="text" name="images" placeholder="images" class="input_field"> <br>
-  <input type="text" name="warrenty_period" placeholder="warrenty_period" class="input_field"> <br>
-  <input type="text" name="category" placeholder="category" class="input_field"> <br>
+  <input type="text" name="warranty_period" placeholder="warranty_period in days" class="input_field"> <br>
+  <label for="category">Category:</label>
+    <select name="category" id="category">
+        <option value="Animals">Animals</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Fruits and vegetables">Fruits and vegetables</option>
+        <option value="Sports">Sports</option>
+        <option value="Plants">Plants</option>
+        <option value="Jewelry">Jewelry</option>
+        <option value="Letters and numbers">Letters and numbers</option>
+        <option value="Insects and mammals">Insects and mammals</option>
+        <option value="Planets">Planets</option>
+
+    </select>
   <input type="text" name="colors" placeholder="colors" class="input_field"> 
-  <select id="colors_dropdown" name="colors_dropdown">
-    {% for color in colors %}
-      <option value="{{ color }}">{{ color }}</option>
-    {% endfor %}
-  </select>
-  <script>
-    
-  </script>
   <input type="text" name="sizes" placeholder="sizes" class="input_field"> <br>
-  <select id="sizes_dropdown" name="sizes_dropdown">
-    {% for size in sizes %}
-      <option value="{{ size }}">{{ size }}</option>
-    {% endfor %}
-  </select>
   <input type="number" name="inventory" placeholder="inventory" class="input_field"> <br>
   <input type="submit" value="Submit" class="input_submit">
 </form>
-  <div>
-      {{ search_info }}
+  
+<form action="/discount">
+  add discounts:
+  <input type="text" name="product_id" placeholder="product_id" class="input_field"> <br>
+  <input type="text" name="current_price" placeholder="current price" class="input_field"> <br>
+  <input type="text" name="new_price" placeholder="new price" class="input_field"> <br>
+  <input type="text" name="time_left" placeholder="length of time for discount in days " class="input_field"> 
+  <input type="submit" value="Submit" class="input_submit">
+</form>
 
 
 <h2>All products that you as a {{session['type']}} can access</h2>
@@ -104,16 +98,24 @@
             <ul>
                 <li>Item Name: {{i[1]}}</li>
                 <li>Item description: {{i[2]}}</li>
-                <li>images: {{i[3]}}</li>
-                <li>warrenty_period: {{i[4]}}</li>
-                <li>category: {{i[5]}}</li>
-                <li>colors: {{i[6]}}</li>
-                <li>sizes: {{i[7]}}</li>
-                <li>inventory: {{i[8]}}</li>
+                <!-- <li>images: {{i[3]}}</li> -->
+                <li>warrenty_period: {{i[3]}}</li>
+                <li>category: {{i[4]}}</li>
+                <!-- <li>colors: {{i[]}}</li>
+                <li>sizes: {{i[]}}</li> -->
+                <li>inventory: {{i[5]}}</li>
             </ul>
         </ul>
     </div>
 {%endfor%}
+{%for i in sizes %}
+    <div class="sizes">
+        <ul>
+              <li>sizes: {{i[]}}</li>
+        </ul>
+    </div>
+{%endfor%}
+
 
 
 </div>

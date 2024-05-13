@@ -2,10 +2,52 @@
 
 {% block body %}
 
-{% if loggedIn == True %}
+<style>
+  .address{
+    text-align: center;
+  }
+  .input_field{
+    max-width: 50%;
+    /* background-color: ; */
+  }
+  h3{
+    text-align: center;
+  }
+</style>
+{% if session['loggedin'] == True %}
     <h1>This is the accounts page. You are logged in.</p>
-    <h1>Welcome, {{ session['username'] }}</h3>
-    <h1>You are a {{ session['type'] }}</h3> 
-{% else %}
+    <h1>Welcome, {{session['username']}}</h1>
+     <h1> First: {{session['first']}}</h1>
+     <h1> Last:  {{session['last']}}</h1>
+     <h1> Email:  {{session['email']}}</h1>
+    <h1>You are a {{session['type'] }}</h3> 
+      <!-- {%if address%} -->
+      <h1>Your addresses </h3> 
+        <!-- {%endif%} -->
+      <h3>add contact information: </h3>
+      <form action="/contact" class = 'address'>
+        <input type="text" name="phone_number" placeholder="add a phone number" class="input_field"> <br>
+        <input type="text" name="address" placeholder="update first" class="input_field"> <br>
+        <input type="text" name="address" placeholder="update last" class="input_field"> <br>
+        <input type="text" name="city" placeholder="update email" class="input_field"> <br>
+        <input type="text" name="state" placeholder="add third address" class="input_field"> <br>
+        <input type="submit"  placeholder="add " class="input_field"> <br>
+
+      </form>
+      <h3>add an address: </h3>
+      <form action="/contact" class = 'address'>
+        <input type="text" name="phone_number" placeholder="phone_number" class="input_field"> <br>
+        <input type="text" name="address" placeholder="add first address" class="input_field"> <br>
+        <input type="text" name="address" placeholder="add first address" class="input_field"> <br>
+        <input type="text" name="city" placeholder="add second address" class="input_field"> <br>
+        <input type="text" name="state" placeholder="add third address" class="input_field"> <br>
+        <input type="submit"  placeholder="add " class="input_field"> <br>
+
+      </form>
+
+  {%else%}
+    <h1>This is the accounts page. <br> You are NOT logged in.</p>
+    <h1>please loggin after signing up in the register page</h3>
+
 {% endif %}
 {% endblock %}
