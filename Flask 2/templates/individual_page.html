@@ -1,193 +1,139 @@
 {% extends "base.html"%}
 {% block body %}
 <style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        color: #333;
+     body {
+        color: black;
+        font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 24px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; } h3 { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; } p { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } blockquote { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; } pre { font-family: "Bodoni MT", Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px;
         margin: 0;
         padding: 0;
         background-color: #f9f9f9;
+
+    }
+
+    * {
+        font-size: medium;
     }
 
     .container {
-        max-width: 1200px;
+        max-width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
         margin: 0 auto;
         padding: 20px;
-    }
-
-    .product {
         background-color: #fff;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
         margin-bottom: 20px;
     }
 
-    .product img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-        margin-bottom: 10px;
+    .products {
+        flex-basis: 48%;
+        text-align: center;
     }
 
-    .product-details h1 {
-        font-size: 24px;
-        margin-top: 0;
-        margin-bottom: 10px;
+    .price {
+        text-align: center;
     }
 
-    .product-details ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    .add_cart {
+        max-width: fit-content;
+        text-align: center;
     }
 
-    .product-details ul li {
-        margin-bottom: 10px;
+    .add_cart {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    .product-details .btn {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
+    .add_cart:hover {
+      background-color: #45a049;
+    }
+    
+    select {
+        max-width: fit-content;
     }
 
-    .product-details .btn:hover {
-        background-color: #0056b3;
+    .images {
+        flex-basis: 48%;
+        max-width: 400px;
+        max-height: 400px;
+        min-width: 200px;
+        min-height: 200px;
+        display: block;
+        margin-top: 5px;
+        margin-left: 20px;
     }
+
+    .images img {
+        margin: 5px;        
+        width: 300px;
+        height: 300px;
+    }
+   .new_footer_top{
+    width: 100%;
+   }
+
 </style>
-<div class="container">
-    {% if products %}
-    {% for product in products %}
-    <div class="product">
-        <div class="product-images">
-            <img src="{{ product.image }}" alt="Product Image">
-            <!-- Additional product images or image gallery can be added here -->
-        </div>
-        <div class="product-details">
-            <h1>{{ product.title }}</h1>
-            <p class="product-description">{{ product.description }}</p>
-            <ul class="product-specs">
-                <li><strong>Warranty Period:</strong> {{ product.warranty_period }}</li>
-                <li><strong>Category:</strong> {{ product.category }}</li>
-                <!-- Add other product details as needed -->
-            </ul>
-            <div class="product-actions">
-                <button class="btn btn-primary">Add to Cart</button>
-                <!-- Additional actions such as favorite or share buttons can be added here -->
-            </div>
-        </div>
-    </div>
+{% if products %}
+<div class="container"><div>
+    {% for image in images %}
+        <img class="images" src="{{ image.image }}" alt="No images selected">
     {% endfor %}
+    
+</div>
+    <div class="products">
+        <h1 style="font-weight: 600; font-size: larger;">{{ products[1] }}</h1>
+        <hr>
+        {% if price %}
+        <ul>
+            <h2>Current Price: {{ price[0] }}</h2>
+            <h2 style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</h2>
+            <h2>Time Remaining: {{ price[3] }}</h2>
+        </ul>
+        {% endif %}
+        <hr>
+        <h1>{{ products[2] }}</h1>
+        <h1>Warranty Period: {{ products[3] }}</h1>
+        <h1>Category: {{ products[4] }}</h1>
+        <h1>Inventory: {{ products[5] }}</h1>
+        <h1>Creator: {{ products[6] }}</h1>
+
+        <h1>
+            Sizes:
+            <select name="sizes" id="sizes">
+                {% for size in sizes %}
+                    <option value="{{ size.size }}">{{ size.size }}</option>
+                {% endfor %}
+            </select>
+        </h1>
+        <h1>
+            Colors:
+            <select name="colors" id="colors">
+                {% for color in colors %}
+                    <option value="{{ color.color }}">{{ color.color }}</option>
+                {% endfor %}
+            </select>
+        </h1>
+    
+    
     {% else %}
-    <p>No products found.</p>
+        <p>No products found.</p>
     {% endif %}
+    <form class="add_cart_form" style="text-align: center;" action="/individual" method="POST">
+        <input type="hidden" name="clicked_product_id" value="{{ products[0] }}">
+        <input type="submit" value="Add to Cart" class="add_cart">
+    </form> 
 </div>
+<div>
 
-<div class="pdp-wide__wrapper" itemscope itemtype="http://schema.org/Product">
-    <link href="http://www.productontology.org/id/Clothing" itemprop="additionalType">
-    <div itemprop="manufacturer" itemscope itemtype="http://schema.org/Organization">
-        <meta content="Badgley Mischka" itemprop="name">
-    </div>
+</div> 
 
-    <div class="pdp-wide__primary">
-        <div class="pdp-header">
-            <div class="pdp-header__info-top">
-                <h2 class="universal-xlarge--semibold product-designer">
-                    <a href="/designers/badgley_mischka?source=pdp">Badgley Mischka</a>
-                </h2>
-                <div class="product-rating-container__wrapper">
-                    <a class="anchor-product-aggregate-rating" href="#reviews-partial">
-                        <div>
-                            <div class="product-aggregate-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
-                                <meta content="1" itemprop="worstRating">
-                                <meta content="9" itemprop="ratingValue">
-                                <meta content="10" itemprop="bestRating">
-                                <span class="product-aggregate-rating__stars reb-gold-stars-9"></span>
-                                <span class="universal-small" itemprop="reviewCount">(722)</span>
-                            </div>
-                            <div class="accessibility-rating-caption">(4.5 out of 5 stars)</div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="pdp-header__display-name-wrapper">
-                <h1 class="pdp-header__display-name universal-medium" itemprop="name" aria-label="Product Name">Navy Constellation Gown</h1>
-            </div>
-            <div class="pdp-price pdp-price--retail-only" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-                <link href="http://schema.org/LimitedAvailability" itemprop="availability">
-                <span class="atom-retail-price grid-product-card-price grid-product-card-price--retail universal-medium">
-                    <span class="universal-medium--secondary">$650 original retail</span>
-                    <div class="tool-tip-icon" data-test-id="tool-tip-icon">
-                        <div class="icon reb-tooltip"></div>
-                        <div class="tooltip tooltip-top tooltip-center">
-                            <div class="tool-tip-content">
-                                <p>This number represents the “Original Retail” or “Comparable Value” price. Items may be in the rental rotation for multiple seasons after these prices are set. For more info on these prices, see our <a class="universal-small--semibold universal-underline" href="https://help.renttherunway.com/en_us/how-does-rtr-price-items-on-site--rkQ926BdD" rel="noopener noreferrer" target="_blank">FAQs</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </span>
-                <div class="transition-wrapper"></div>
-                <div class="pdp-price__subline"></div>
-            </div>
-        </div>
-        
-        <div class="product-details">
-            <div class="collapsible-menu">
-                <h5 class="universal-medium--semibold collapsible-title">Product Details</h5>
-                <div class="universal-small" style="display:none">Blue sequins on mesh (100% Nylon). Sleeveless. One shoulder. Hidden side zipper. Fully lined. See size and fit tab for length. Imported.</div>
-            </div>
-            <div class="collapsible-menu">
-                <h5 class="universal-medium--semibold collapsible-title">Stylist Notes</h5>
-                <div class="universal-small" style="display: none;">A one-shoulder neckline brings elegance to this sequined gown by <strong>Badgley Mischka</strong>. Add polish with pearl earrings and a simple heel. <br><br>Also available in <a href="https://www.renttherunway.com/shop/designers/badgley_mischka/green_constellation_gown">green</a> and and <a href="https://www.renttherunway.com/shop/designers/badgley_mischka/blush_constellation_gown">blush</a>.</div>
-            </div>
-            <div open="" class="collapsible-menu active">
-                <h5 class="universal-medium--semibold collapsible-title">Size &amp; Fit</h5>
-                <div class="universal-small">This dress runs true to size. We recommend going one size up for backup (see following fit notes for exceptions). Sized: 0-12 & plus 14W-22W. <p style="margin:15px"><strong>BUST</strong>: Great for any cup size - comfortable room at bust <br><strong>WAIST</strong>: Fitted - dress fitted throughout midsection <br><strong>HIPS</strong>: Fitted - stretchy fabric allows comfortable room for full hips <br><strong>LENGTH</strong>: Three lengths available. Petite measures 56" from shoulder to hem (recommended for heights under 5'2"), Regular measures 58'' from shoulder to hem (recommended for heights 5'2''-5'6''), Long measures 61'' from shoulder to hem (recommended for heights 5'7''-5'11''). </p><p style="margin:15px"><strong>UNDERGARMENTS</strong>: Should be worn with a strapless bra <br><strong>FABRIC</strong>: Fabric is very stretchy . </p></div>
-            </div>
-            <div class="no-intent-cta-container" data-test-id="no-intent-cta-container">
-                <button class="btn btn-full-width no-intent-subscription-cta" type="button">
-                    <p class="universal-medium--semibold">Rent with Subscription</p>
-                    <p class="universal-medium">Always have 5+ items at home</p>
-                </button>
-                <button class="btn-secondary btn-full-width no-intent-reserve-cta" type="button" role="link">
-                    <p class="universal-medium--semibold">Reserve an Event Rental</p>
-                    <p class="universal-medium">Book a look for a specific date</p>
-                </button>
-            </div>
-            <div class="collapsible-menu">
-                <h5 class="universal-medium--semibold collapsible-title">Share</h5>
-                <div style="display: none;">
-                    <div class="social-link fb-like-button log" data-action="click_productshare_facebook">
-                        <div class="fb-like fb_iframe_widget" data-action="like" data-layout="button_count" data-share="true" data-show-faces="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=142571992596&amp;container_width=0&amp;href=https%3A%2F%2Fwww.renttherunway.com%2Fshop%2Fdesigners%2Fbadgley_mischka%2Fnavy_constellation_gown&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=true&amp;show_faces=true">
-                            <span style="vertical-align: bottom; width: 150px; height: 28px;">
-                                <iframe name="f235fe8a2062d2042" width="1000px" height="1000px" data-testid="fb:like Facebook Social Plugin" title="fb:like Facebook Social Plugin" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" src="https://www.facebook.com/plugins/like.php?action=like&amp;app_id=142571992596&amp;channel=https%3A%2F%2Fstaticxx.facebook.com%2Fx%2Fconnect%2Fxd_arbiter%2F%3Fversion%3D46%23cb%3Dfb5e5f9d2d6545eea%26domain%3Dwww.renttherunway.com%26is_canvas%3Dfalse%26origin%3Dhttps%253A%252F%252Fwww.renttherunway.com%252Ffd2d8321c04dcc9b4%26relation%3Dparent.parent&amp;container_width=0&amp;href=https%3A%2F%2Fwww.renttherunway.com%2Fshop%2Fdesigners%2Fbadgley_mischka%2Fnavy_constellation_gown&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=true&amp;show_faces=true" style="border: none; visibility: visible; width: 150px; height: 28px;" class=""></iframe>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="social-link pinterest-button log" data-action="click_productshare_pinterest">
-                        <a data-pin-do="buttonPin" href="https://www.pinterest.com/pin/create/button/?url=undefined&amp;media=https%3A%2F%2Fpc-ap.rtrcdn.com%2Fproductimages%2Fside%2F1080x%2F7b%2FBM311.jpg&amp;description=Badgley%20Mischka%20Navy%20Constellation%20Gown">
-                            <img data-test="image" alt="Pin It" src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" loading="eager">
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="pdp-left">
-        <div class="product-images">
-            <div class="thumbnails">
-                <!-- Thumbnail images here -->
-            </div>
-            <div class="featured-image-wrapper">
-                <!-- Featured image here -->
-            </div>
-        </div>
-    </div>
-</div>
+
 {% endblock %}

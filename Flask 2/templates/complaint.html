@@ -1,6 +1,10 @@
 <style>
     .body{
-        margin: auto;
+        position: relative;
+        left: 25%;
+        max-width: 50%;
+        text-align: center;
+        justify-content: center;
     }
     .input_field {
       width: 100%;
@@ -31,11 +35,16 @@
 {% block body %}
 <div class="body">
     <form action="/complaint" method="POST">
-        <input type="text" name="complaint" placeholder="would you like to make a complaint, return, review, or talk about warranty_period" class="input_field"> <br>
+        <input type="text" name="complaint" placeholder="would you like to make a 'complaint', 'return', 'review', or talk about 'warranty_period'" class="input_field"> <br>
         <input type="submit" value="Submit" class="input_submit">
     </form>
-    
-    </div>
+
+    {%if complaint == 'complaint'%}
+      <form action="/make_complaint" method="POST">
+        <input type="text" name="make-complaint" placeholder="leave a complaint" class="input_field"> <br>
+        <input type="submit" value="Submit" class="input_submit">
+     </form>
+     {%endif%}
 </div>
 
 {%endblock%}

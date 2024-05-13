@@ -21,10 +21,10 @@
     width: 100%;
     background-color: #4CAF50;
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+    padding: 6px 10px;
+    margin: 5px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -130,6 +130,10 @@ img{
     justify-items: stretch;
     width: 50%;
 }
+select{
+   
+}
+
 
 </style>
 {%extends "base.html"%}
@@ -137,13 +141,13 @@ img{
 <div class="body">
     <div class="search">
         <form class="search_bar" action="/search" method="POST">
-            <input type="text" name="product_search" placeholder="search for a product, or vendor" class="input_field"> <br>
+            <input type="text" name="product_search" placeholder="search for a product title, vendor or description" class="input_field"> <br>
             <div id="products-list"></div>
             <input type="submit" value="search" class="input_submit">
             <input type="submit" value="reset serach" class="input_submit">
 
         </form> 
-        <form action="filter">
+        <form action="/categories" method="POST">
             Filter categories:
             <select name="category" id="category">
                 <option value="Animals">Animals</option>
@@ -155,11 +159,42 @@ img{
                 <option value="Letters and numbers">Letters and numbers</option>
                 <option value="Insects and mammals">Insects and mammals</option>
                 <option value="Planets">Planets</option>
+               
             </select>
-            <input type="submit" value="Submit" class="input_submit">
+            <input type="submit" value="search" class="input_submit">
+        </form>    
+ 
+        <form action="/sizes" method="POST">
+            Filter sizes:
+            <select name="sizes" id="sizes">
+                
+                <option value="extra_small">Extra Small</option>
+                <option value="Small">Small</option>
+                <option value="Meidum">Meidum</option>
+                <option value="Large">Large</option>
+                <option value="1Xl">1XL</option>
+                <option value="2Xl">2XL</option>
+                <option value="3Xl">3XL</option>
+              
+            </select>
+            <input type="submit" value="search" class="input_submit">
 
         
-        </form>        
+        </form>
+        <form action="/colors" method="POST">
+            Filter colors:
+            <select name="colors" id="colors">
+                <option value="Blue">Black</option>
+                <option value="Blue">Red</option>
+                <option value="Blue">Blue</option>
+                <option value="Green">Green</option>
+                <option value="Orange">Orange</option>
+                <option value="Blue">Pink</option>
+            </select>
+            <input type="submit" value="search" class="input_submit">
+
+        
+        </form>  
     </div>
     {% for product in products %}
 <div class="flex products">
@@ -167,6 +202,7 @@ img{
         <li>Item Name: {{ product[1] }}</li>
         <li>Item Description: {{ product[2] }}</li>
         <!-- You can add logic here to display multiple images -->
+    
         <li>
           
             {% for image in images %}
@@ -175,8 +211,8 @@ img{
                 {% endif %}
             {% endfor %}
         </li>
-        <li>Warranty Period: {{ product[4] }}</li>
-        <li>Category: {{ product[5] }}</li>
+        <li>Warranty Period: {{ product[3] }}</li>
+        <li>Category: {{ product[4] }}</li>
         <li>
             Sizes:
             <select name="sizes" id="sizes">
@@ -197,7 +233,14 @@ img{
                 {% endfor %}
             </select>
         </li>
-        <li>Inventory Left: {{ product[8] }}</li>
+        <li>Inventory Left: {{ product[5] }}</li>
+        <li>Creator {{ product[6] }}</li>
+        {% if price %}
+        <li>Current Price: {{ price[0] }}</li>
+        <li style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</li>
+        <li>Time Remaining: {{ price[3] }}</li>
+
+        {% endif %}
         <form class="cart_button" action="/individual" method="POST">
             <input type="hidden" name="clicked_product_id" value="{{ product.product_id }}">
             <input type="submit" value="Go to Cart" class="go_to_cart">
