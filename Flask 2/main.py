@@ -200,10 +200,9 @@ def edit_products():
     if request.method == 'GET':
         if 'type' in session:
             if session['type'] == 'admin':
-                # Admin can see all products
                 edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+                sizes = conn.execute(text('SELECT * FROM size')).fetchall()
             elif session['type'] == 'vendor':
-                # Vendors can see only their products
                 username = session['username']
                 edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
             else:
@@ -251,8 +250,12 @@ def edit_products():
                 sizes_input = request.form.get('sizes')
                 sizes = [size.strip() for size in sizes_input.split(',')]
                 for size in sizes:
+                    print (size)
                     conn.execute(text('UPDATE size SET size=:size WHERE product_id=:product_id'), {'size': size, 'product_id': product_id})
-                    conn.commit()     
+                    conn.commit()   
+                conn.execute(text('delete from size where WHERE product_id=:product_id and size != size'), {'size': size, 'product_id': product_id})
+                conn.commit()   
+
 
                 # Update colors in the database
                 colors_input = request.form.get('colors')
@@ -280,20 +283,31 @@ def edit_products():
         else:
             return 'Unauthorized access. Please log in first.'
         
+                    # conn.execute(text('UPDATE size SET size=:size WHERE product_id=:product_id'), {'size': size, 'product_id': product_id})
+#discounts
+@app.route('/discount', methods=['GET', 'POST'])
+def discount():
+    if request.method == 'POST':
+        product_id = request.form.get('product_id')
+        current_price = request.form.get('current_price')
+        new_price = request.form.get('new_price')
+        time_left = request.form.get('time_left')
 
-#delete products
+    conn.execute(text('UPDATE price SET new_price=:new_price, time_left=:time_left WHERE product_id=:product_id AND current_price=:current_price'),{'time_left': time_left, 'new_price': new_price, 'product_id': product_id, 'current_price': current_price})
+    conn.commit()
+    return render_template('edit_product.html')
 
-
+#delete products on delete product page
 @app.route('/delete_product', methods=["GET"])
 def delete_return():
    if request.method == 'GET':
-    username = session.get('username')  # Retrieve username from session
+    username = session.get('username') 
     account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': username})
     user_data = account.fetchone()
     
     if user_data:
         user_type = user_data[6] 
-        if user_type == 'vendor' and username == user_data[1]: 
+        if user_type == 'vendor': 
             edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username})
             return render_template('delete.html', edit_products=edit_products)
         elif user_type == 'admin':
@@ -304,101 +318,131 @@ def delete_return():
 @app.route('/delete_product', methods=["POST"])
 def delete_return_post():
     if request.method == 'POST':
-        username = session.get('username')  # Retrieve username from session
-        account = conn.execute(
-            text("SELECT * FROM account WHERE username = :username OR email = :username"),
-            {'username': username}
-        )
+        username = session.get('username')
+        account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"),{'username': username})
         user_data = account.fetchone()
         
         if user_data:
             user_type = user_data[6]
-            if user_type == 'vendor' and username == user_data[1]: 
-                # Retrieve products created by the vendor
-                edit_products = conn.execute(
-                    text('SELECT * FROM product WHERE username = :username'), 
-                    {'username': username}
-                ).fetchall()
-                # Delete selected product
+            if user_type == 'vendor':
                 product_id = request.form.get('product_id')
-                conn.execute(
-                    text("DELETE FROM product WHERE product_id = :product_id AND username = :username"), 
-                    {'product_id': product_id, 'username': username}
-                )
-                conn.commit()
-                # Retrieve updated list of products
-                edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
-                return render_template('delete.html', edit_products=edit_products)
-            elif user_data[6] == 'admin':
-                # Delete selected product by admin
+                if product_id:
+                    conn.execute(text("Set FOREIGN_KEY_CHECKS=0;"))
+                    conn.commit()
+                    conn.execute(text("DELETE FROM product WHERE product_id = :product_id AND username = :username"),{'product_id': product_id, 'username': username})
+                    conn.commit()
+                    conn.execute(text("Set FOREIGN_KEY_CHECKS=1;"))
+                    conn.commit()
+                    edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
+                    return render_template('delete.html', edit_products=edit_products)
+                else:
+                    return "Product ID not provided."
+            
+            elif user_type == 'admin':
                 product_id = request.form.get('product_id')
-                conn.execute(
-                    text("DELETE FROM product WHERE product_id = :product_id"), 
-                    {'product_id': product_id}
-                )
-                conn.commit()
-                # Retrieve updated list of products
-                edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
-                return render_template('delete.html', edit_products=edit_products)
-    
+                if product_id:
+                    conn.execute(text("Set FOREIGN_KEY_CHECKS=0;"))
+                    conn.commit()
+                    conn.execute(text("DELETE FROM product WHERE product_id = :product_id"),{'product_id': product_id})
+                    conn.commit()
+                    conn.execute(text("Set FOREIGN_KEY_CHECKS=1;"))
+                    conn.commit()
+                    edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
+                    return render_template('delete.html', edit_products=edit_products)
+                else:
+                    return "Product ID not provided."
     return render_template('delete.html')
 
 
+#ALL PROD PAGE
 #display products
-    
 @app.route('/show_product', methods=["POST", "GET"])
 def show_product_page():
     if request.method == 'GET':
-        # Retrieve products and sizes
         products = conn.execute(text('SELECT * FROM product')).fetchall()
+        price = conn.execute(text('SELECT * FROM price')).fetchall()
         sizes = conn.execute(text('SELECT * FROM size')).fetchall()
         colors = conn.execute(text('SELECT * FROM color')).fetchall()
         images = conn.execute(text('SELECT * FROM image')).fetchall()
-
-        return render_template('show_product.html', products=products, sizes=sizes, colors=colors, images = images)
+        return render_template('show_product.html', products=products, sizes=sizes, colors=colors, images = images, price=price)
     
     if request.method == 'POST':
         clicked_product_id = request.form['clicked_product_id']
         return render_template('individual_page.html', clicked_product_id=clicked_product_id)
             
-# search
+# search bar product page
 @app.route('/search', methods=["POST", "GET"])
 def search():
     if request.method == 'POST':
         product_search = request.form['product_search']
-        products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        products = conn.execute(text("SELECT * FROM product WHERE title LIKE :product_search or description LIKE :product_search or username LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+        colors = conn.execute(text('SELECT * FROM color')).fetchall()
+        images = conn.execute(text('SELECT * FROM image')).fetchall()
         if product_search != products:
-            return render_template("show_product.html", products=products)  
-        return render_template("show_product.html", products=products)
+            return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)  
+        return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)
         
-@app.route('/filter', methods=["GET","POST"])
-def filter():
+    #categories filter
+@app.route('/categories', methods=["POST", "GET"])
+def categories():
     if request.method == 'POST':
-        category_filter = request.form.get('category_filter')
-        if category_filter:
-            products = Product.query.filter_by(category=category_filter).all()
-            return render_template("show_product.html", products=products)
-        else:
-            flash('Please select a category.', 'error')
-    return render_template("filter_form.html")
-    
+        product_search = request.form['category']
+        products = conn.execute(text("SELECT * FROM product WHERE category LIKE :product_search"), {'product_search': f"%{product_search}%"})
+        sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+        colors = conn.execute(text('SELECT * FROM color')).fetchall()
+        images = conn.execute(text('SELECT * FROM image')).fetchall()
+        if product_search != products:
+            return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)  
+        return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)
+    #size filter
+@app.route('/sizes', methods=["POST", "GET"])
+def sizes():
+    if request.method == 'POST':
+        product_search = request.form['sizes']
+        products = conn.execute(text("SELECT * FROM product WHERE product_id IN (SELECT product_id FROM size WHERE size = :size)"), {'size': product_search} ).fetchall()
+        sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+        colors = conn.execute(text('SELECT * FROM color')).fetchall()
+        images = conn.execute(text('SELECT * FROM image')).fetchall()
+
+        return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images=images)
+    #color filter
+@app.route('/colors', methods=["POST", "GET"])
+def colors():
+    if request.method == 'POST':
+        product_search = request.form['colors']
+        products = conn.execute(text("SELECT * FROM product WHERE product_id IN (SELECT product_id FROM color WHERE color = :color)"), {'color': product_search} ).fetchall()
+        sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+        colors = conn.execute(text('SELECT * FROM color')).fetchall()
+        images = conn.execute(text('SELECT * FROM image')).fetchall()
+        return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images=images)
+
 
 @app.route('/individual', methods=["POST", "GET"])
 def individual():
     if request.method == 'GET':
         clicked_product_id = request.args.get('clicked_product_id')
-        individual_product = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
-        price = conn.execute(text('SELECT * FROM price WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
-        return render_template('individual_page.html', individual_product=individual_product, price=price)
+        # print(clicked_product_id) 
+        products = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
+        price = conn.execute(text('SELECT * FROM price WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
+        sizes = conn.execute(text('SELECT * FROM size WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        images = conn.execute(text('SELECT * FROM image WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        colors = conn.execute(text('SELECT * FROM color WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        return render_template('individual_page.html', products=products, price=price, sizes=sizes, images=images, colors=colors)
 
     if request.method == 'POST':
         clicked_product_id = request.form['clicked_product_id']
-        individual_product = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
-        price = conn.execute(text('SELECT * FROM price WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
-        return render_template('individual_page.html', individual_product=individual_product, price=price)
+        products = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
+        price = conn.execute(text('SELECT * FROM price WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
+        sizes = conn.execute(text('SELECT * FROM size WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        images = conn.execute(text('SELECT * FROM image WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        colors = conn.execute(text('SELECT * FROM color WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        return render_template('individual_page.html', products=products, price=price, sizes=sizes, images=images, colors=colors)
 
- 
 
+@app.route('/complaint', methods=["POST", "GET"])
+def complaint():
+      render_template('complaint.html')
 
 
 if __name__ == '__main__':

@@ -1,7 +1,10 @@
 <style>
   .body{
       margin: auto;
+      max-width: 50%;
   }
+  
+
   .input_field {
     width: 100%;
     padding: 12px 20px;
@@ -78,9 +81,12 @@
 </form>
   
 <form action="/discount">
+  add discounts:
+  <input type="text" name="product_id" placeholder="product_id" class="input_field"> <br>
   <input type="text" name="current_price" placeholder="current price" class="input_field"> <br>
   <input type="text" name="new_price" placeholder="new price" class="input_field"> <br>
-  <input type="text" name="time" placeholder="length of time for discount in days " class="input_field"> 
+  <input type="text" name="time_left" placeholder="length of time for discount in days " class="input_field"> 
+  <input type="submit" value="Submit" class="input_submit">
 </form>
 
 
@@ -92,16 +98,24 @@
             <ul>
                 <li>Item Name: {{i[1]}}</li>
                 <li>Item description: {{i[2]}}</li>
-                <li>images: {{i[3]}}</li>
-                <li>warrenty_period: {{i[4]}}</li>
-                <li>category: {{i[5]}}</li>
-                <li>colors: {{i[6]}}</li>
-                <li>sizes: {{i[7]}}</li>
-                <li>inventory: {{i[8]}}</li>
+                <!-- <li>images: {{i[3]}}</li> -->
+                <li>warrenty_period: {{i[3]}}</li>
+                <li>category: {{i[4]}}</li>
+                <!-- <li>colors: {{i[]}}</li>
+                <li>sizes: {{i[]}}</li> -->
+                <li>inventory: {{i[5]}}</li>
             </ul>
         </ul>
     </div>
 {%endfor%}
+{%for i in sizes %}
+    <div class="sizes">
+        <ul>
+              <li>sizes: {{i[]}}</li>
+        </ul>
+    </div>
+{%endfor%}
+
 
 
 </div>
