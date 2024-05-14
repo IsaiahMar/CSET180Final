@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 
 app = Flask(__name__)
-conn_str = 'mysql://root:Cookiebear1@/180final'
+conn_str = 'mysql://root:IMatornado$2023@/180final'
 engine = create_engine(conn_str, echo = True)
 conn = engine.connect()
 app.secret_key = 'secret key'
@@ -172,11 +172,11 @@ def post_products():
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
 
-        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
             # Singular inputs
             title = request.form.get('title')
             description = request.form.get('description')
-            warranty_period = request.form.get('warranty_period')
+            warrenty_period = request.form.get('warrenty_period')
             category = request.form.get('category')
             inventory = request.form.get('inventory')
             username = session['username']
@@ -193,8 +193,8 @@ def post_products():
             #     return redirect(url_for('new_products'))
 
             # Insert product into database
-            result = conn.execute(text("INSERT INTO product (title, username, description, warranty_period, category, inventory) VALUES (:title, :username, :description, :warranty_period, :category, :inventory)"), 
-                        {'title': title, 'description': description, 'warranty_period': warranty_period, 'category' : category,  'username': username, 'inventory': inventory})
+            result = conn.execute(text("INSERT INTO product (title, description, warrenty_period, category, inventory) VALUES (:title, :description, :warrenty_period, :category, :inventory)"), 
+                        {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category' : category,  'username': username, 'inventory': inventory})
             result = conn.execute(text("SELECT LAST_INSERT_ID()"))
             product_id = result.fetchone()[0]
             conn.commit()     
@@ -264,7 +264,7 @@ def edit_products():
                 product_id = request.form.get('product_id')
                 title = request.form.get('title')
                 description = request.form.get('description')
-                warranty_period = request.form.get('warranty_period')
+                warrenty_period = request.form.get('warrenty_period')
                 category = request.form.get('category')
                 inventory = request.form.get('inventory')
                 username = session['username']
@@ -282,7 +282,7 @@ def edit_products():
 
                 # Insert product into database
                 conn.execute(text("UPDATE product SET title=:title, username=:username, description=:description, warranty_period=:warranty_period, category=:category, inventory=:inventory WHERE product_id=:product_id"), 
-                            {'title': title, 'description': description, 'warranty_period': warranty_period, 'category': category, 'username': username, 'inventory': inventory, 'product_id': product_id})
+                            {'title': title, 'description': description, 'warrenty_period': warrenty_period, 'category': category, 'username': username, 'inventory': inventory, 'product_id': product_id})
                 conn.commit()     
 
                 # Update sizes in the database
@@ -435,6 +435,27 @@ def categories():
             return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)  
         return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)
     #size filter
+    
+@app.route('/cart', methods=['GET'])
+def cart():
+    return render_template('cart.html')
+@app.route('/cart', methods=['POST'])
+def cartpage():
+    if request.form.get("clear_cart") == "yes":
+        # Assuming `conn` is your SQLAlchemy connection object
+        conn.execute(text("DELETE FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("id")))
+        conn.commit()
+
+        products = conn.execute(text("SELECT title, price, size, color, inventory, image, product_id FROM product")).all()
+        cart = conn.execute(text("SELECT product_id FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("account_id"))).all()
+        cart = [row[0] for row in cart]
+        cart_length = len(cart)
+
+        quantity = conn.execute(text("SELECT item_quantity FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("account_id"))).all()
+        quantity = [row[0] for row in quantity]
+
+        length = len(products)
+        return render_template('cart.html', p=products, l=length, cart=cart, q=quantity, cart_length=cart_length)
 @app.route('/sizes', methods=["POST", "GET"])
 def sizes():
     if request.method == 'POST':
@@ -477,6 +498,8 @@ def individual():
         images = conn.execute(text('SELECT * FROM image WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
         colors = conn.execute(text('SELECT * FROM color WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
         return render_template('individual_page.html', products=products, price=price, sizes=sizes, images=images, colors=colors)
+
+
 
 
 @app.route('/complaint', methods=["POST", "GET"])
