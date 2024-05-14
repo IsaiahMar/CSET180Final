@@ -430,34 +430,5 @@ h1, h2, h3, h4, h5, h6 {
        </div>
    </div>
 </footer>
-<script>
- function generate(){
-    var result = '';
-
-    result += document.getElementsByClassName('drop').value + ' - ';
-    result += document.getElementById('text2').value;
-
-	document.getElementById('output').innerHTML = result;
-}
-generate();   
-
-function login() {
-    let email = document.getElementById("email").value;
-    let pass = document.getElementById("pass").value;
-
-    if (localStorage.getItem(email)) {
-        if (pass == localStorage.getItem(email)) {
-            location.replace("menu.html");
-            alert("Login Successful");
-        } else if (pass == "") {
-            alert("Login Failed please enter your password");
-        }
-    } else if (email == "") {
-        alert("Login Failed please enter your email");
-    } else if (localStorage.getItem(email) == null || pass == "") {
-        alert("Login Failed Unknown credential combination");
-    }
-}
-</script>
 </body>
 </html>

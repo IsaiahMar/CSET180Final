@@ -48,55 +48,59 @@
     <label class="product-removal">Remove</label>
     <label class="product-line-price">Total</label>
   </div>
-{% for i in product}
-<div class="flex products">
-    <ul>
-        <li>Item Name: {{ i[1] }}</li>
-        <li>Item Description: {{ i[2] }}</li>
-        <!-- You can add logic here to display multiple images -->
-    
-        <li>
+  {% if products %}
+  <div class="container">
+      <div class="product-details">
+          <div class="images">
+              {% for image in images %}
+                  <img class="product-image" src="{{ image.image }}" alt="No images selected">
+              {% endfor %}
+          </div>
           
-            {% for image in images %}
-                {% if image.product_id == i[0] %}
-                    <img src="{{ image.image }}" alt="No images selected">
-                {% endif %}
-            {% endfor %}
-        </li>
-        <li>Warranty Period: {{ i[3] }}</li>
-        <li>Category: {{ i[4] }}</li>
-        <li>
-            Sizes:
-            <select name="sizes" id="sizes">
-                {% for size in sizes %}
-                {% if size.product_id == i[0] %}
-                <option value="{{ size.size }}">{{ size.size }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-        </li>
-        <li>
-            Colors:
-            <select name="colors" id="colors">
-                {% for color in colors %}
-                {% if color.product_id == i[0] %}
-                <option value="{{ color.color }}">{{ color.color }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-        </li>
-        <li>Inventory Left: {{ i[5] }}</li>
-        <li>Creator {{ i[6] }}</li>
-        {% if price %}
-        <li>Current Price: {{ price[0] }}</li>
-        <li style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</li>
-        <li>Time Remaining: {{ price[3] }}</li>
+          <div class="product-info">
+              <h1>{{ products[1] }}</h1>
+              <hr>
+              {% if price %}
+              <ul>
+                  <li><strong>Current Price:</strong> {{ price[0] }}</li>
+                  <li style="color: rgb(42, 170, 42);"><strong>Discounted Price:</strong> {{ price[1] }}</li>
+                  <li><strong>Time Remaining:</strong> {{ price[3] }}</li>
+              </ul>
+              {% endif %}
+              <hr>
+              <p>{{ products[2] }}</p>
+              <p><strong>Warranty Period:</strong> {{ products[3] }}</p>
+              <p><strong>Category:</strong> {{ products[4] }}</p>
+              <p><strong>Inventory:</strong> {{ products[5] }}</p>
+              <p><strong>Creator:</strong> {{ products[6] }}</p>
+  
+              <p>
+                  <strong>Sizes:</strong>
+                  <select name="sizes" id="sizes">
+                      {% for size in sizes %}
+                          <option value="{{ size.size }}">{{ size.size }}</option>
+                      {% endfor %}
+                  </select>
+              </p>
+              <p>
+                  <strong>Colors:</strong>
+                  <select name="colors" id="colors">
+                      {% for color in colors %}
+                          <option value="{{ color.color }}">{{ color.color }}</option>
+                      {% endfor %}
+                  </select>
+              </p>
+          </div>
+      </div>
+      
+      <form class="add-cart-form" action="/cart" method="POST">
+          <input type="hidden" name="clicked_product_id" value="{{ products[0] }}">
+          <input type="submit" value="Add to Cart" class="add-to-cart-button">
+      </form>
+  </div>
+  {% else %}
+  <p>No products found.</p>
+  {% endif %}
+  
 
-        {% endif %}
-        <form class="cart_button" action="/cart" method="POST">
-            <input type="hidden" name="clicked_product_id" value="{{ product.product_id }}">
-            <input type="submit" value="Go to Cart" class="go_to_cart">
-        </form>        
-    </ul>
-</div>
 {% endblock %}

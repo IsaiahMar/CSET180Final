@@ -154,8 +154,7 @@ def create_account():
     password = request.form.get('password').lower()
     email = request.form.get('email').lower()
     type = request.form.get('type').lower()
-    conn.execute(text(
-        'INSERT INTO account (first, last, username, password, email, type) VALUES (:first, :last, :username, :password, :email, :type)'),
+    conn.execute(text('INSERT INTO account (first, last, username, password, email, type) VALUES (:first, :last, :username, :password, :email, :type)'),
                     {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
     conn.commit()
     return render_template("create_acc.html")
@@ -172,7 +171,7 @@ def post_products():
         account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
         user_data = account.fetchone()
 
-        if user_data and (user_data[6] == 'Vendor' or user_data[6] == 'admin'):
+        if user_data and (user_data[6] == 'vendor' or user_data[6] == 'admin'):
             # Singular inputs
             title = request.form.get('title')
             description = request.form.get('description')
@@ -435,27 +434,35 @@ def categories():
             return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)  
         return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)
     #size filter
-    
+
 @app.route('/cart', methods=['GET'])
 def cart():
-    return render_template('cart.html')
+    products = conn.execute(text('SELECT * FROM product')).fetchall()
+    price = conn.execute(text('SELECT * FROM price')).fetchall()
+    sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+    colors = conn.execute(text('SELECT * FROM color')).fetchall()
+    images = conn.execute(text('SELECT * FROM image')).fetchall()
+    return render_template('cart.html', products=products, sizes=sizes, colors=colors, images = images, price=price)
 @app.route('/cart', methods=['POST'])
 def cartpage():
-    if request.form.get("clear_cart") == "yes":
-        # Assuming `conn` is your SQLAlchemy connection object
-        conn.execute(text("DELETE FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("id")))
-        conn.commit()
+    clicked_product_id = request.form['clicked_product_id']
+    product = conn.execute(text('SELECT * FROM product WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchone()
+    cart_items = conn.execute(text('SELECT * FROM cart WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
 
-        products = conn.execute(text("SELECT title, price, size, color, inventory, image, product_id FROM product")).all()
-        cart = conn.execute(text("SELECT product_id FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("account_id"))).all()
-        cart = [row[0] for row in cart]
-        cart_length = len(cart)
 
-        quantity = conn.execute(text("SELECT item_quantity FROM cart WHERE account_id = :account_id").bindparams(account_id=session.get("account_id"))).all()
-        quantity = [row[0] for row in quantity]
+    cart_product_ids = [item[0] for item in cart_items]
 
-        length = len(products)
-        return render_template('cart.html', p=products, l=length, cart=cart, q=quantity, cart_length=cart_length)
+
+    if 'cart' not in session:
+        session['cart'] = []
+
+    if clicked_product_id not in cart_product_ids:
+        session['cart'].append(product)
+
+    return render_template('cart.html', cart=session['cart'])
+
+    
+    
 @app.route('/sizes', methods=["POST", "GET"])
 def sizes():
     if request.method == 'POST':
