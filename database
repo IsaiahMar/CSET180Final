@@ -1,0 +1,168 @@
+create database 180final;
+use 180final;
+drop database 180final;
+
+CREATE TABLE account (
+    account_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first VARCHAR(40) NOT NULL,
+    last VARCHAR(40) NOT NULL,
+    email VARCHAR(40) NOT NULL unique,
+    username VARCHAR(40) NOT NULL,
+    password VARCHAR(200) NOT NULL,
+    type VARCHAR(20)
+);
+select * from product;
+-- drop table account;
+-- select * from orders;
+CREATE TABLE product (
+    product_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL, 
+    description VARCHAR(1000) NOT NULL, 
+    warranty_period int NOT NULL, 
+    category VARCHAR(50) NOT NULL, 
+    inventory INT NOT NULL,
+	username varchar(40) not null
+
+);
+
+CREATE TABLE cart (
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    image VARCHAR(255),
+    current_price FLOAT(10,2),
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+drop table orders;
+CREATE TABLE orders (
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    FOREIGN KEY (product_id) REFERENCES product(product_id),
+    title VARCHAR(50) NOT NULL, 
+    date DATE,
+    buyer_id INT,
+    FOREIGN KEY (buyer_id) REFERENCES account(account_id),
+    order_process VARCHAR(40) default 'pending',
+    vendor varchar(100)
+);
+select * from orders;
+
+drop table orders;
+select * from product;
+select * from account;
+
+INSERT INTO orders (product_id, buyer_id, title, order_process, date, vendor )
+VALUES (6,1, 'This is the title of the product', 'pending', current_date(), 'ven1' );
+
+INSERT INTO orders (product_id, buyer_id, title, order_proccess, date)
+VALUES (1, 3, 'This is the title of the product', 'pending', current_date());
+
+-- INSERT INTO orders (product_id, buyer_id, title, order_proccess)
+-- VALUES (1, 1, 'prod1', 'pending');
+
+-- INSERT INTO orders (product_id, buyer_id, title, order_proccess)
+-- VALUES (2, 2, 'prod2', 'pending');
+-- NEED TO ADD DATE TO ORDERS
+
+
+
+drop table complaint;
+select * from complaint;
+CREATE TABLE complaint (
+    complaint_id INT AUTO_INCREMENT PRIMARY KEY,
+    complaint_username VARCHAR(100),
+    date_issued DATE, 
+    demand VARCHAR(500) UNIQUE,
+    product_id INT,
+    FOREIGN KEY (product_id) REFERENCES product(product_id),
+    complaint_process VARCHAR(50) DEFAULT 'pending',
+    title varchar(200)
+);
+
+
+
+CREATE TABLE price (
+    current_price FLOAT(10,2),
+    new_price FLOAT(10,2),
+    date date, 
+    time_left INT ,
+    product_id int,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+-- select * from price;
+
+
+-- delete from price where product_id != 4;
+-- ALTER TABLE orders
+-- ADD order_proccess varchar(50) default 'pending';
+-- ALTER TABLE complaint
+-- ADD complaint_proccess varchar(50) default 'pending';
+
+
+CREATE TABLE review (
+    review_id int auto_increment primary key,
+    reviewer_id int,
+    foreign key (reviewer_id) references account(account_id),
+    date_issued date, 
+    review varchar(1000),
+	product_id int,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+CREATE TABLE size (
+	size_id int auto_increment primary key,
+    size varchar(15),
+	product_id int,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+CREATE TABLE color (
+	color_id int auto_increment primary key,
+    color varchar(15),
+	product_id int,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+-- drop table color;
+CREATE TABLE image (
+	image_id int auto_increment primary key,
+    image varchar(1000),
+	product_id int,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+
+
+select * from price;
+select * from account;
+select * from product;
+select * from size;
+select * from color;
+select * from image;
+select * from complaint;
+select * from returns;
+
+
+
+-- set product_id in price table to product Id of product being inserted or updated
+
+
+-- ALTER TABLE account
+-- MODIFY COLUMN password VARCHAR(1000);
+
+
+
+-- Set FOREIGN_KEY_CHECKS=0 ;
+-- delete from product where product_id = 4 and username = 'ven1';
+-- Set FOREIGN_KEY_CHECKS=1 ;
+
+
+-- SELECT * 
+-- FROM size 
+-- NATURAL JOIN color, image;
+
+-- select * from product where product_id = size;
+-- delete from size where product_id = 1 and size != 'large';
+-- drop table reviews;
+-- drop table account;
+-- drop table product;
+show tables;
+ 
