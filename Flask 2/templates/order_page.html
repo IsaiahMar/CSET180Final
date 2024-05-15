@@ -99,9 +99,7 @@
                     <li>
                        <strong> Product Title: {{ order[2] }}</strong> <br>
                         Date Ordered: {{ order[3] }} <br>
-                        Order ID: {{ order[0] }} <br>
-                        Product ID: {{ order[1] }} <br>
-                        Buyer ID: {{ order[4] }} <br>
+                        Vendor {{order[6]}} <br>
                         Proccess : {{ order[5] }} <br>
                         <hr style="width: 50%;">
                     </li>
@@ -114,26 +112,33 @@
 
     {% elif session['type'] == 'vendor' %}
     {% if orders %}
-        <title>Vendor Complaints/ Returns Page</title>
+        <title>Vendor Orders</title>
         <h1>Welcome Vendor {{ session['username'] }}</h1>
         <div class="body">
-            <form action="/complaint" method="POST">
-                <input type="text" name="product_id" placeholder="Accept this product_id " class="input_field"> <br>
-                <input type="text" name="request" placeholder="is it a 'complaint'/ 'return' / 'warranty_period'?" class="input_field"> <br>
-                <input type="text" name="words" placeholder="What would you like to say, EX: I accept this because..." class="input_field"> <br>
+            <form action="/confirm" method="POST">
+                <input type="text" name="order_id" placeholder="Confirm this order with its Order ID " class="input_field"> <br>
+                <input type="submit" value="Submit" class="input_submit">
+            </form>
+            <form action="/handed" method="POST">
+                <input type="text" name="order_id" placeholder="Hand thus delivery to with Order ID " class="input_field"> <br>
+                <input type="submit" value="Submit" class="input_submit">
+            </form>
+            <form action="/delivered" method="POST">
+                <input type="text" name="order_id" placeholder="Deliver this order with its Order ID " class="input_field"> <br>
                 <input type="submit" value="Submit" class="input_submit">
             </form>
         </div>
 
         <div class="orders">
-            <h2>Pending Complaints</h2>
+            <h2> Orders Status</h2>
             <ul>
                 {% for order in orders %}
                     <li>
+                        Order ID {{ order[0] }} <br>
                         Product ID: {{ order[4] }} <br>
-                        Complainter ID: {{ order[1] }} <br>
-                        Date_issued: {{ order[2] }} <br>
-                        Demand: {{ order[3] }} <br>
+                        Title: {{ order[2] }} <br>
+                        User: {{ order[1] }} <br>
+                        Date_issued: {{ order[3] }} <br>
                         Proccess: {{ order[5] }} <br>
                         <hr>
                     </li>

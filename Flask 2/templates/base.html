@@ -308,7 +308,7 @@ ul{
                 <li><a href="/show_product">All Products</a></li>
                 <li><a href="/complaint"> Reviews/ Returns and More</a></li>
                 <li><a href="/order_page"> My Orders</a></li>
-                <li><a href="/shopping">Shopping Cart</a></li>
+                <li><a href="/cart">Shopping Cart</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>
@@ -325,7 +325,7 @@ ul{
         {% else %}
         <div class="topBar">
             <ul class="barItem">
-                <li><a href="/">Dashboard</a></li>
+                <li><a href="/home">Dashboard</a></li>
                 <li><a href="/create_acc">Create Acc</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
@@ -422,34 +422,5 @@ ul{
        </div>
    </div>
 </footer>
-<script>
- function generate(){
-    var result = '';
-
-    result += document.getElementsByClassName('drop').value + ' - ';
-    result += document.getElementById('text2').value;
-
-	document.getElementById('output').innerHTML = result;
-}
-generate();   
-
-function login() {
-    let email = document.getElementById("email").value;
-    let pass = document.getElementById("pass").value;
-
-    if (localStorage.getItem(email)) {
-        if (pass == localStorage.getItem(email)) {
-            location.replace("menu.html");
-            alert("Login Successful");
-        } else if (pass == "") {
-            alert("Login Failed please enter your password");
-        }
-    } else if (email == "") {
-        alert("Login Failed please enter your email");
-    } else if (localStorage.getItem(email) == null || pass == "") {
-        alert("Login Failed Unknown credential combination");
-    }
-}
-</script>
 </body>
 </html>

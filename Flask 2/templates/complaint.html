@@ -76,12 +76,10 @@ hr{
 
   
     <div class="orders">
-        <h2>All Complaints </h2>
+        <h2>All Orders </h2>
         <ul>
             {% for order in orders %}
             <li>
-              Complaint ID: {{ order[0] }} <br>
-              Complainter ID: {{ order[1] }} <br>
               Product Title: {{ order[2] }} <br>
               Date 3: {{ order[3] }} <br>
               Product ID: {{ order[4] }} <br>
@@ -100,9 +98,9 @@ hr{
 {% if session['type'] == 'vendor' %}
 <title>Complaints</title>
 <body>
-  <form action="/remove_complaint" method="POST">
-    <input type="text" name="product_id" placeholder="Type the product ID that you would like to request" class="input_field"> <br>
-    <input type="submit" value="Submit" class="input_submit">
+  <form action="/complaint" method="POST">
+    <input type="text" name="complaint_id" placeholder="Type the Complaint ID that you would like to remove" class="input_field"> <br>
+    <input style="background-color: red;" type="submit" value="Submit" class="input_submit">
 </form>
   {% if orders %}
   <h1>All of Your Complaints</h1>
@@ -142,8 +140,16 @@ hr{
         </form>
         <form action="/reject" method="POST">
           <input type="text" name="product_id" placeholder="reject complaint with product_id " class="input_field"> <br>
+          <input style="background-color: red;" type="submit" value="Submit" class="input_submit">
+        </form>
+        <form action="/processing" method="POST">
+          <input type="text" name="product_id" placeholder="process complaint with product_id " class="input_field"> <br>
+          <input  type="submit" value="Submit" class="input_submit">
+        </form>
+        <form action="/complete" method="POST">
+          <input type="text" name="product_id" placeholder="complete complaint with product_id " class="input_field"> <br>
           <input type="submit" value="Submit" class="input_submit">
-      </form>
+        </form>
     </div>
 
     {% if orders %}
@@ -153,9 +159,9 @@ hr{
             {% for order in orders %}
             <li>
               Complaint ID: {{ order[0] }} <br>
-              Complainter ID: {{ order[1] }} <br>
-              Product Title: {{ order[2] }} <br>
-              Date 3: {{ order[3] }} <br>
+              Complainter: {{ order[1] }} <br>
+              Date: {{ order[2] }} <br>
+              Demand: {{ order[3] }} <br>
               Product ID: {{ order[4] }} <br>
             <hr>
           </li>

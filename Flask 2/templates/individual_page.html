@@ -127,7 +127,7 @@
     {% else %}
         <p>No products found.</p>
     {% endif %}
-    <form class="add_cart_form" style="text-align: center;" action="/individual" method="POST">
+    <form class="add_cart_form" style="text-align: center;" action="/cart" method="POST">
         <input type="hidden" name="clicked_product_id" value="{{ products[0] }}">
         <input type="submit" value="Add to Cart" class="add_cart">
     </form> 
