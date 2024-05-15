@@ -434,6 +434,19 @@ def categories():
             return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)  
         return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images = images)
     #size filter
+@app.route('/review', methods=['GET', 'POST'])
+def review():
+    if request.method == "POST":
+        conn.execute(text("insert into reviews (product_id, rating, description) values (:product_id, :rating, :desc)"), request.form)
+        conn.commit()
+
+        reviews = conn.execute(text("select * from reviews")).all()
+        num_reviews = len(reviews)
+        return render_template('review.html', reviews=reviews, num_reviews=num_reviews)
+
+    reviews = conn.execute(text("select * from reviews")).all()
+    num_reviews = len(reviews)
+    return render_template('review.html', reviews=reviews, num_reviews=num_reviews)
 
 @app.route('/cart', methods=['GET'])
 def cart():
