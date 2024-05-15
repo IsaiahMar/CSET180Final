@@ -1,51 +1,160 @@
 <style>
-    .body{
-        position: relative;
-        left: 25%;
-        max-width: 50%;
-        text-align: center;
-        justify-content: center;
-    }
-    .input_field {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      display: table-caption;
-      border: 1px blue;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
+ 
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px;
+}
+ 
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+textarea {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+ 
+.reviews {
+    margin-top: 20px;
+    text-align: left;
+}
+ 
+.review {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+ 
+.review p {
+    margin: 0;
+}
+.body{
 
-    .input_submit {
-      width: 100%;
-      background-color: #4CAF50;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+    position: relative;
+    left: 25%;
+    max-width: 50%;
+    text-align: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+  
 
-    .input_submit:hover {
-      background-color: #45a049;
-    }
+}
+.input_field {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: table-caption;
+  border: 1px blue;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.input_submit {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input_submit:hover {
+  background-color: #45a049;
+}
+.footer{
+  width: 100%;
+}
+.new_footer_top{
+width: 100%;
+}
 </style>
-{% extends "base.html"%}
+{% extends "base.html" %}
 {% block body %}
-<div class="body">
-    <form action="/complaint" method="POST">
-        <input type="text" name="complaint" placeholder="would you like to make a 'complaint', 'return', 'review', or talk about 'warranty_period'" class="input_field"> <br>
-        <input type="submit" value="Submit" class="input_submit">
-    </form>
+{% if session['type'] == 'customer' %}
+<title>Complaints</title>
+<body>
+  {% if orders %}
+  <h1>request a refund, return, or warrenty_period</h1>
+    <div class="body">
+        <form action="/complaint" method="POST">
+            <input type="text" name="product_id" placeholder="Type the product ID that you would like to request" class="input_field"> <br>
+            <input type="text" name="request" placeholder="Would you like to make a 'complaint', 'return', or talk about 'warranty_period'" class="input_field"> <br>
+            <input type="text" name="words" placeholder="What would you like to say" class="input_field"> <br>
+            <input type="submit" value="Submit" class="input_submit">
+        </form>
+    </div>
 
-    {%if complaint == 'complaint'%}
-      <form action="/make_complaint" method="POST">
-        <input type="text" name="make-complaint" placeholder="leave a complaint" class="input_field"> <br>
-        <input type="submit" value="Submit" class="input_submit">
-     </form>
-     {%endif%}
-</div>
+  
+    <div class="orders">
+        <h2>Orders</h2>
+        <ul>
+            {% for order in orders %}
+            <li>
+                Product ID: {{ order[1] }} <br>
+                Product Title: {{ order[2] }} <br>
+                Product 3: {{ order[3] }} <br>
+                Product 4: {{ order[4] }} <br>
 
-{%endblock%}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {%else%}
+    <h1>You must order a produt to leave a complaint</h1>
+    {% endif %}
 
+
+{% endif %}
+
+
+
+{% if session['type'] == 'admin' %}
+<title>Admin Complaints/ Returns Page</title>
+<h1> Welcome Admin {{session['username']}}</h1>
+
+<body>
+    <div class="body" >
+        <form action="/complaint" method="POST">
+            <input type="text" name="product_id" placeholder="Accept this product_id " class="input_field"> <br>
+            <input type="text" name="request" placeholder="is it a 'complaint'/ 'return' / 'warranty_period'?" class="input_field"> <br>
+            <input type="text" name="words" placeholder="What would you like to say, EX: I accept this because..." class="input_field"> <br>
+            <input type="submit" value="Submit" class="input_submit">
+        </form>
+    </div>
+
+    {% if orders %}
+    <div class="orders">
+        <h2>Pending Complaints</h2>
+        <ul>
+            {% for order in orders %}
+            <li>
+                Product ID: {{ order[4] }} <br>
+                Complainter ID: {{ order[1] }} <br>
+                Date_issued: {{ order[2] }} <br>
+                Demand: {{ order[3] }} <br>
+                Proccess: {{ order[5] }} <br>
+                <hr>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+{% endif %}
+
+{% endblock %}
+
+
+</body>
+
+
+</html>

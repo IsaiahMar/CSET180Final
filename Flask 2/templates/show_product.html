@@ -195,57 +195,65 @@ select{
 
         
         </form>  
+        <form action="/inventory" method="POST">
+            Filter inventory:
+            <select name="inventory" id="inventory">
+                <option value="1">In Stock</option>
+                <option value="0">Out Of Stock</option>
+            </select>
+            <input type="submit" value="search" class="input_submit">
+        </form>  
+
     </div>
     {% for product in products %}
-<div class="flex products">
-    <ul>
-        <li>Item Name: {{ product[1] }}</li>
-        <li>Item Description: {{ product[2] }}</li>
-        <!-- You can add logic here to display multiple images -->
-    
-        <li>
-          
-            {% for image in images %}
-                {% if image.product_id == product[0] %}
-                    <img src="{{ image.image }}" alt="No images selected">
+    <div class="flex products">
+        <ul>
+            <li>Item Name: {{ product[1] }}</li>
+            <li>Item Description: {{ product[2] }}</li>    
+            <li>
+                {% for image in images %}
+                    {% if image.product_id == product[0] %}
+                        <img src="{{ image.image }}" alt="No images selected">
+                    {% endif %}
+                {% endfor %}
+            </li>
+            <li>Warranty Period: {{ product[3] }}</li>
+            <li>Category: {{ product[4] }}</li>
+            <li>
+                Sizes:
+                <select name="sizes" id="sizes">
+                    {% for size in sizes %}
+                        {% if size.product_id == product[0] %}
+                            <option value="{{ size.size }}">{{ size.size }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </li>
+            <li>
+                Colors:
+                <select name="colors" id="colors">
+                    {% for color in colors %}
+                        {% if color.product_id == product[0] %}
+                            <option value="{{ color.color }}">{{ color.color }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </li>
+            <li>Inventory Left: {{ product[5] }}</li>
+            <li>Creator {{ product[6] }}</li>
+            {% for single_price in prices %}
+                {% if single_price.product_id == product[0] %}
+                    <li>Current Price: {{ single_price[0] }}</li>
+                    <li style="color: rgb(42, 170, 42);">Discounted Price: {{ single_price[1] }}</li>
+                    <li>Time Remaining: {{ single_price[3] }}</li>
                 {% endif %}
             {% endfor %}
-        </li>
-        <li>Warranty Period: {{ product[3] }}</li>
-        <li>Category: {{ product[4] }}</li>
-        <li>
-            Sizes:
-            <select name="sizes" id="sizes">
-                {% for size in sizes %}
-                {% if size.product_id == product[0] %}
-                <option value="{{ size.size }}">{{ size.size }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-        </li>
-        <li>
-            Colors:
-            <select name="colors" id="colors">
-                {% for color in colors %}
-                {% if color.product_id == product[0] %}
-                <option value="{{ color.color }}">{{ color.color }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-        </li>
-        <li>Inventory Left: {{ product[5] }}</li>
-        <li>Creator {{ product[6] }}</li>
-        {% if price %}
-        <li>Current Price: {{ price[0] }}</li>
-        <li style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</li>
-        <li>Time Remaining: {{ price[3] }}</li>
-
-        {% endif %}
-        <form class="cart_button" action="/individual" method="POST">
-            <input type="hidden" name="clicked_product_id" value="{{ product.product_id }}">
-            <input type="submit" value="Go to Cart" class="go_to_cart">
-        </form>        
-    </ul>
-</div>
-{% endfor %}
+            <form class="cart_button" action="/individual" method="POST">
+                <input type="hidden" name="clicked_product_id" value="{{ product.product_id }}">
+                <input type="submit" value="Go to Cart" class="go_to_cart">
+            </form>        
+        </ul>
+    </div>
+    {% endfor %}
+    
 {%endblock%}

@@ -1,244 +1,81 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block body %}
 <style>
-/* Style for section with class buildm5 header4 */
-.buildm5.header4 {
-  color: #000;
-  position: relative;
-  text-align: center;
-  background-color: #c4d6b0; /* Change the text color as needed */
-  padding: 100px 0; /* Adjust padding as needed */
-}
-
-/* Overlay style */
-.buildm5.header4 .mbr-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("pex");
- background-color: #cccccc;
-
-}
-
-/* Style for section with class buildm5 features6 */
-.buildm5.features6 {
-  padding: 100px 0; /* Adjust padding as needed */
-  background-color: #fff; /* Change the background color as needed */
-  color: #000; /* Change the text color as needed */
-}
-
-/* Style for the main title in section features6 */
-.buildm5.features6 .mbr-section-maintitle {
-  font-size: 2.5rem; /* Adjust font size as needed */
-  font-weight: bold; /* Adjust font weight as needed */
-}
-
-/* Style for the subtitle in section features6 */
-.buildm5.features6 .mbr-section-subtitle {
-  font-size: 1.5rem; /* Adjust font size as needed */
-}
-
-/* Style for the text in section features6 */
-.buildm5.features6 .mbr-text {
-  font-size: 1rem; /* Adjust font size as needed */
-}
-
-/* Style for section titles */
-.buildm5.features6 .mbr-section-title {
-  font-size: 1.2rem; /* Adjust font size as needed */
-  font-weight: bold; /* Adjust font weight as needed */
-  margin-bottom: 10px; /* Adjust margin as needed */
-}
-
-/* Style for horizontal line */
-.buildm5.features6 .line {
-  border-top: 1px solid #000; /* Change line color as needed */
-  margin-top: 10px; /* Adjust margin as needed */
-}
-
-    
+  .dashboard {
+    border: solid 1px;
+    text-align: center;
+    margin-bottom: 100px; /* Add margin to create space for the footer */
+  }
+  
+  .dashboard li {
+    width: 32%;
+    border: solid 1px;
+    float: left;
+    height: 200px;
+    margin: 5px;
+    list-style: none;
+    justify-content: center;
+  }
+  
+  .dashboard img {
+    max-width: 100%; 
+    height: 180px; 
+  }
+  
+  footer {
+    position: relative; /* Position the footer at the bottom of the viewport */
+    bottom: 0;
+    width: 100%;
+    background-color: #f1f1f1; /* Example background color */
+    padding: 20px; /* Example padding */
+    text-align: center;
+  }
 </style>
-<!DOCTYPE html>
-<html  >
-<head>
-  <!-- Site made with Mobirise Website Builder v5.9.7, https://mobirise.com -->
-  <!-- <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="generator" content="Mobirise v5.9.7, mobirise.com">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
-  <meta name="description" content="New BuildM5 Theme HTML Template - Download Now!">
-  
-  
-  <title>BuildM5 Theme Fence Construction Company Demo</title>
-  
-  <link rel="preload" href="https://fonts.googleapis.com/css?family=Onest:100,200,300,400,500,600,700,800,900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Onest:100,200,300,400,500,600,700,800,900&display=swap"></noscript>
-  <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css" type="text/css">
 
-  
-  
-  
-</head>
-<body>
 
-<section data-bs-version="5.1" class="buildm5 header4 cid-tZs6dNO9lW mbr-fullscreen" id="header4-2">
-  
-  <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
-  
-  <div class="container">
-    <div class="row">
-      <div class="content-wrap col-12 col-md-12">
-        
-        
-
-        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1">Fence Construction Company</h1>
-
-      </div>
-    </div>
+{% if session['type'] == 'none' %}
+  <div class="dashboard">
+    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
+    <li><a href="/create_acc"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Create Account"> </a></li>
+    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
-</section>
-
-<section data-bs-version="5.1" class="buildm5 features6 cid-tZsbxl9CR7" id="features6-e">
-  
-  
-  
-  <div class="container">
-    <div class="row">
-
-      <div class="col-lg-6">
-
-        <h2 class="mbr-section-maintitle mbr-fonts-style mbr-white pb-5 display-2">Construction Industry&nbsp;</h2>
-
-      </div>
-
-      <div class="col-12 col-lg-6">
-        <h3 class="mbr-section-subtitle mbr-fonts-style mbr-white pb-3 display-5">The construction industry utilizes a variety of techniques.
-        </h3>
-        <p class="mbr-fonts-style mbr-text mbr-white mb-5 display-7">
-          The construction industry utilizes a variety of techniques and methodologies to bring projects to life.
-          Traditional construction methods involve the use of manual labor, tools, and materials to construct
-          buildings and infrastructure.</p>
-
-
-        <div class="content-wrap">
-          <div class="col-lg-12 my-auto">
-            <h2 class="mbr-section-title m-0 mbr-fonts-style mbr-white display-7">Traditional construction methods&nbsp;
-            </h2>
-          </div>
-          <div class="col-12">
-            <div class="line"></div>
-          </div>
-        </div>
-
-        <div class="content-wrap">
-          <div class="col-lg-12 my-auto">
-            <h2 class="mbr-section-title m-0 mbr-fonts-style mbr-white display-7">Traditional construction methods&nbsp;
-            </h2>
-          </div>
-          <div class="col-12">
-            <div class="line"></div>
-          </div>
-        </div>
-
-        <div class="content-wrap">
-          <div class="col-lg-12 my-auto">
-            <h2 class="mbr-section-title m-0 mbr-fonts-style mbr-white display-7">Traditional construction methods&nbsp;
-            </h2>
-          </div>
-          <div class="col-12">
-            <div class="line"></div>
-          </div>
-        </div>
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-    </div>
+{% elif session['type'] == 'admin' %}
+  <div class="dashboard">
+    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
+    <li><a href="/create_products"><img src="https://cdn-icons-png.flaticon.com/512/7387/7387315.png" alt="Add Product"></a></li>
+    <li><a href="/delete_product"> <img src="https://static.thenounproject.com/png/2858513-200.png" alt="Delete Products"> </a></li>
+    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/complaint"><img src="https://static.vecteezy.com/system/resources/thumbnails/007/817/914/small/warranty-guarantee-icon-award-badge-sign-symbol-vector.jpg" alt="Complaints"></a></li>
+    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
-</section>
-
-<section data-bs-version="5.1" class="buildm5 features1 cid-tZsbvlBenl" id="features1-b">
-  
-  
-  
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="line"></div>
-      </div>
-      <div class="col-12 col-lg-3">
-        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-5">Сountry house in loft style
-          for guests</h1>
-        <div class="mbr-section-btn"><a class="btn btn-primary display-7" href="https://mobiri.se">
-            <div><span>Read More</span></div>
-          </a></div>
-      </div>
-      <div class="col-12 col-lg-3">
-
-        <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">
-          2023<br>168m<br>5 badroom</p>
-
-
-      </div>
-      <div class="col-lg-4">
-        <div class="image-wrapper">
-          <img class="w-100" src="assets/images/56763456546.jpg" alt="Mobirise Website Builder">
-        </div>
-      </div>
-      <div class="col-lg-2">
-        <div class="image-wrapper">
-          <img class="w-100" src="assets/images/57456546.jpg" alt="Mobirise Website Builder">
-        </div>
-      </div>
-    </div>
+{% elif session['type'] == 'vendor' %}
+  <div class="dashboard">
+    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
+    <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
+    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
+    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
+    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
-</section>
-
-<section data-bs-version="5.1" class="buildm5 features1 cid-tZsbvHR94S" id="features1-c">
-  
-  
-  
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <div class="line"></div>
-      </div>
-      <div class="col-12 col-lg-3">
-        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-5">House in <br>loft style</h1>
-        <div class="mbr-section-btn"><a class="btn btn-primary display-7" href="https://mobiri.se">
-            <div><span>Read More</span></div>
-          </a></div>
-      </div>
-      <div class="col-12 col-lg-3">
-
-        <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">
-          2023<br>168m<br>5 badroom</p>
-
-
-      </div>
-      <div class="col-lg-4">
-        <div class="image-wrapper">
-          <img class="w-100" src="assets/images/67865757657.jpg" alt="Mobirise Website Builder">
-        </div>
-      </div>
-      <div class="col-lg-2">
-        <div class="image-wrapper">
-          <img class="w-100" src="assets/images/7898546456.jpg" alt="Mobirise Website Builder">
-        </div>
-      </div>
-    </div>
+{% elif session['type'] == 'customer' %}
+  <div class="dashboard">
+    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
+    <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
+    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
+    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
+    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
-</section> -->
-  {% endblock %}
+{% else %}
+  <div class="dashboard">
+    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
+    <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
+    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
+    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
+    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
+  </div>
+{% endif %}
+{% endblock body %}
+
+

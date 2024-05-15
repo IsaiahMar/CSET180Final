@@ -91,31 +91,52 @@
 
 
 <h2>All products that you as a {{session['type']}} can access</h2>
-{%for i in edit_products %}
-    <div class="products">
-        <ul>
-            <li>Item Id: {{i[0]}}</li>
+{% for i in edit_products %}
+<div class="flex products">
+    <ul>
+       <i ><li>Product ID: {{ i[0] }}</li></i> 
+       <strong><li>Item Name: {{ i[1] }}</li></strong> 
+        <li>Item Description: {{ i[2] }}</li>
+            {% for image in images %}
+                {% if image.product_id == i[0] %}
+                <li>Images: {{ image.image }}</li>
+                {% endif %}
+            {% endfor %}
+        </li>
+        <li>Warranty Period: {{ i[3] }}</li>
+        <li>Category: {{ i[4] }}</li>
+        <li>Sizes:
             <ul>
-                <li>Item Name: {{i[1]}}</li>
-                <li>Item description: {{i[2]}}</li>
-                <!-- <li>images: {{i[3]}}</li> -->
-                <li>warrenty_period: {{i[3]}}</li>
-                <li>category: {{i[4]}}</li>
-                <!-- <li>colors: {{i[]}}</li>
-                <li>sizes: {{i[]}}</li> -->
-                <li>inventory: {{i[5]}}</li>
+                {% for size in sizes %}
+                    {% if size.product_id == i[0] %}
+                        <li>{{ size.size }}</li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-        </ul>
-    </div>
-{%endfor%}
-{%for i in sizes %}
-    <div class="sizes">
-        <ul>
-              <li>sizes: {{i[]}}</li>
-        </ul>
-    </div>
-{%endfor%}
+        </li>
+        <li>Colors:
+            <ul>
+                {% for color in colors %}
+                    {% if color.product_id == i[0] %}
+                        <li>{{ color.color }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+        <li>Inventory Left: {{ i[5] }}</li>
+        <li>Creator: {{ i[6] }}</li>
+        {% if price %}
+            <li>Current Price: {{ price[0] }}</li>
+            <li style="color: rgb(42, 170, 42);">Discounted Price: {{ price[1] }}</li>
+            <li>Time Remaining: {{ price[3] }}</li>
+        {% endif %}
+    </ul>
+</div>
+<hr>
+{% endfor %}
 
+
+<!-- COLORS SIZES images -->
 
 
 </div>

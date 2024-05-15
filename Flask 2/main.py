@@ -2,8 +2,10 @@ import flask
 from flask import Flask, render_template, request, redirect, url_for, abort, session, jsonify, flash
 from sqlalchemy import *
 from random import randint
-from datetime import datetime
+from datetime import datetime, date
 import time
+import werkzeug 
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 conn_str = 'mysql://root:Cookiebear1@/180final'
@@ -16,67 +18,67 @@ app.secret_key = 'secret key'
 def homepage():
     return render_template('home.html')
 
-# Login & logout
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        account = conn.execute(text(f"SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
-        user_data = account.fetchone()
+@app.route('/create_acc', methods=['POST'])
+def create_account():
+    first = request.form.get('first').lower()
+    last = request.form.get('last').lower()
+    username = request.form.get('username').lower()
+    password = request.form.get('password')
+    password_hash = generate_password_hash(password)
+    email = request.form.get('email').lower()
+    type = request.form.get('type').lower()
     
-        if user_data and username == user_data[4] and password == user_data[5]:
-            if user_data[6] == "admin":
-                session['loggedin'] = True
-                session['type'] = "admin"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-            elif user_data[6] == "vendor":
-                session['loggedin'] = True
-                session['type'] = "vendor"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-            elif user_data[6] == "customer":
-                session['loggedin'] = True
-                session['username'] = user_data[4] 
-                session['type'] = "customer"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-                
-        elif user_data and username == user_data[3] and password == user_data[5]:
-            if user_data[6] == "admin":
-                session['loggedin'] = True
-                session['type'] = "admin"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-            elif user_data[6] == "vendor":
-                session['loggedin'] = True
-                session['type'] = "vendor"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-            elif user_data[6] == "customer":
-                session['loggedin'] = True
-                session['username'] = user_data[4] 
-                session['type'] = "customer"
-                session['username'] = user_data[4]
-                session['first'] = user_data[1]
-                session['last'] = user_data[2]
-                session ['email'] = user_data[3]
-        
-        else:
-            msg = 'Wrong username or password'
-    return render_template('my_account.html', loggedin = True, account = account)
+    conn.execute(text('INSERT INTO account (first, last, username, password, email, type) VALUES (:first, :last, :username, :password, :email, :type)'),
+                 {'first': first, 'last': last, 'username': username, 'password': password_hash, 'email': email, 'type': type})
+    conn.commit()
+    return render_template("create_acc.html")
 
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    account = conn.execute(text("SELECT * FROM account WHERE username = :username or email = :username"), {'username': username})
+    user_data = account.fetchone()
+    
+    if user_data and check_password_hash(user_data[5], password):
+        session['loggedin'] = True
+        session['account_id'] = user_data[0]
+
+        session['username'] = user_data[4]
+        session['first'] = user_data[1]
+        session['last'] = user_data[2]
+        session['email'] = user_data[3]
+        session['type'] = user_data[6]
+        return render_template('home.html')  # Redirect to home page after successful login
+    
+    elif user_data and username == user_data[3] and password == user_data[5]:
+        if user_data[6] == "admin":
+            session['loggedin'] = True
+            session['type'] = "admin"
+            session['username'] = user_data[4]
+            session['first'] = user_data[1]
+            session['last'] = user_data[2]
+            session ['email'] = user_data[3]
+        elif user_data[6] == "vendor":
+            session['loggedin'] = True
+            session['type'] = "vendor"
+            session['username'] = user_data[4]
+            session['first'] = user_data[1]
+            session['last'] = user_data[2]
+            session ['email'] = user_data[3]
+        elif user_data[6] == "customer":
+            session['loggedin'] = True
+            session['username'] = user_data[4] 
+            session['type'] = "customer"
+            session['username'] = user_data[4]
+            session['first'] = user_data[1]
+            session['last'] = user_data[2]
+            session ['email'] = user_data[3]
+    
+    else:
+        msg = 'Wrong username or password'
+    return render_template('my_account.html', loggedin = True, account = account)
 
 
 #button in heading
@@ -86,7 +88,8 @@ def logout():
         session.clear()
         session['type'] = 'none'
         return render_template('create_acc.html')
-        
+    
+
 
 #accounts page
 @app.route('/my_account', methods= ['get', 'post'])
@@ -97,29 +100,10 @@ def my_account_page():
         user_data = account.fetchone()
         session['username'] = user_data[4]
         info = conn.execute(text('select * from account where username = username')), {'username': username}
-        print(info)
         return render_template('my_account.html', info = info)
     else:
         return render_template('my_account.html')
     
-#CREATE ACCOUNT GET
-@app.route('/create_acc', methods=['GET'])
-def show_newacc():
-    return render_template('create_acc.html')
-#CREATE  ACCOUNT POST
-@app.route('/create_acc', methods=['POST'])
-def create_account():
-    first = request.form.get('first').lower()
-    last = request.form.get('last').lower()
-    username = request.form.get('username').lower()
-    password = request.form.get('password').lower()
-    email = request.form.get('email').lower()
-    type = request.form.get('type').lower()
-    conn.execute(text(
-        'INSERT INTO account (first, last, username, password, email, type) VALUES (:first, :last, :username, :password, :email, :type)'),
-                    {'first': first, 'last': last, 'username': username, 'password': password , 'email': email, 'type': type})
-    conn.commit()
-    return render_template("create_acc.html")
 
 
 #create product
@@ -202,18 +186,24 @@ def edit_products():
             if session['type'] == 'admin':
                 edit_products = conn.execute(text('SELECT * FROM product')).fetchall()
                 sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+                price = conn.execute(text('SELECT * FROM price')).fetchone()
+                sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+                colors = conn.execute(text('SELECT * FROM color')).fetchall()
+                images = conn.execute(text('SELECT * FROM image')).fetchall()
+        
             elif session['type'] == 'vendor':
                 username = session['username']
                 edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
+                sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+                price = conn.execute(text('SELECT * FROM price')).fetchone()
+                sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+                colors = conn.execute(text('SELECT * FROM color')).fetchall()
+                images = conn.execute(text('SELECT * FROM image')).fetchall()
+        
             else:
                 return 'Unauthorized access'
 
-            return render_template('edit_product.html', edit_products=edit_products)
-        #discounts
-            # current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            return render_template('edit_product.html', edit_products=edit_products, sizes=sizes, colors=colors, images=images, price=price)
 
     elif request.method == 'POST':
         if 'type' in session:
@@ -230,18 +220,6 @@ def edit_products():
                 inventory = request.form.get('inventory')
                 username = session['username']
 
-                # # Check if required fields are present
-                # if not all([title, description, category, price, inventory]):
-                #     flash('Please fill in all required fields', 'error')
-                #     return redirect(url_for('new_products'))
-
-                # # Check for duplicate product
-                # duplicate_product = conn.execute(text("SELECT * FROM product WHERE username = :username AND title = :title"), {'username': username, 'title': title}).fetchone()
-                # if duplicate_product:
-                #     flash('This product already exists', 'error')
-                #     return redirect(url_for('new_products'))
-
-                # Insert product into database
                 conn.execute(text("UPDATE product SET title=:title, username=:username, description=:description, warranty_period=:warranty_period, category=:category, inventory=:inventory WHERE product_id=:product_id"), 
                             {'title': title, 'description': description, 'warranty_period': warranty_period, 'category': category, 'username': username, 'inventory': inventory, 'product_id': product_id})
                 conn.commit()     
@@ -253,9 +231,6 @@ def edit_products():
                     print (size)
                     conn.execute(text('UPDATE size SET size=:size WHERE product_id=:product_id'), {'size': size, 'product_id': product_id})
                     conn.commit()   
-                conn.execute(text('delete from size where WHERE product_id=:product_id and size != size'), {'size': size, 'product_id': product_id})
-                conn.commit()   
-
 
                 # Update colors in the database
                 colors_input = request.form.get('colors')
@@ -283,7 +258,6 @@ def edit_products():
         else:
             return 'Unauthorized access. Please log in first.'
         
-                    # conn.execute(text('UPDATE size SET size=:size WHERE product_id=:product_id'), {'size': size, 'product_id': product_id})
 #discounts
 @app.route('/discount', methods=['GET', 'POST'])
 def discount():
@@ -326,18 +300,29 @@ def delete_return_post():
             user_type = user_data[6]
             if user_type == 'vendor':
                 product_id = request.form.get('product_id')
-                if product_id:
-                    conn.execute(text("Set FOREIGN_KEY_CHECKS=0;"))
-                    conn.commit()
-                    conn.execute(text("DELETE FROM product WHERE product_id = :product_id AND username = :username"),{'product_id': product_id, 'username': username})
-                    conn.commit()
-                    conn.execute(text("Set FOREIGN_KEY_CHECKS=1;"))
-                    conn.commit()
-                    edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
-                    return render_template('delete.html', edit_products=edit_products)
-                else:
-                    return "Product ID not provided."
-            
+               
+            if product_id:
+                # Delete from the product table
+                conn.execute(text("DELETE FROM product WHERE product_id = :product_id AND username = :username"), {'product_id': product_id, 'username': username})
+                conn.commit()
+
+                # Delete related entries from other tables
+                conn.execute(text("DELETE FROM size WHERE product_id = :product_id"), {'product_id': product_id})
+                conn.commit()
+
+                conn.execute(text("DELETE FROM color WHERE product_id = :product_id"), {'product_id': product_id})
+                conn.commit()
+
+                conn.execute(text("DELETE FROM images WHERE product_id = :product_id"), {'product_id': product_id})
+                conn.commit()
+
+                conn.execute(text("DELETE FROM price WHERE product_id = :product_id"), {'product_id': product_id})
+                conn.commit()
+
+                # Fetch the updated product list
+                edit_products = conn.execute(text('SELECT * FROM product WHERE username = :username'), {'username': username}).fetchall()
+                return render_template('delete.html', edit_products=edit_products)
+                
             elif user_type == 'admin':
                 product_id = request.form.get('product_id')
                 if product_id:
@@ -360,7 +345,7 @@ def delete_return_post():
 def show_product_page():
     if request.method == 'GET':
         products = conn.execute(text('SELECT * FROM product')).fetchall()
-        price = conn.execute(text('SELECT * FROM price')).fetchall()
+        price = conn.execute(text('SELECT * FROM price')).fetchone()
         sizes = conn.execute(text('SELECT * FROM size')).fetchall()
         colors = conn.execute(text('SELECT * FROM color')).fetchall()
         images = conn.execute(text('SELECT * FROM image')).fetchall()
@@ -417,6 +402,26 @@ def colors():
         images = conn.execute(text('SELECT * FROM image')).fetchall()
         return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images=images)
 
+@app.route('/inventory', methods=["POST", "GET"])
+def inventory():
+    if request.method == 'POST':
+        product_search = request.form['inventory']
+        if product_search == '1':
+            products = conn.execute(text("SELECT * FROM product WHERE inventory >= 1")).fetchall()
+            sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+            colors = conn.execute(text('SELECT * FROM color')).fetchall()
+            images = conn.execute(text('SELECT * FROM image')).fetchall()
+            return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images=images)
+        elif product_search == '0':
+            products = conn.execute(text("SELECT * FROM product WHERE inventory = 0")).fetchall()
+            sizes = conn.execute(text('SELECT * FROM size')).fetchall()
+            colors = conn.execute(text('SELECT * FROM color')).fetchall()
+            images = conn.execute(text('SELECT * FROM image')).fetchall()
+            return render_template("show_product.html", products=products, sizes=sizes, colors=colors, images=images)
+    else:
+        return render_template("show_product.html")
+
+
 
 @app.route('/individual', methods=["POST", "GET"])
 def individual():
@@ -428,6 +433,7 @@ def individual():
         sizes = conn.execute(text('SELECT * FROM size WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
         images = conn.execute(text('SELECT * FROM image WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
         colors = conn.execute(text('SELECT * FROM color WHERE product_id = :product_id'), {'product_id': clicked_product_id}).fetchall()
+        
         return render_template('individual_page.html', products=products, price=price, sizes=sizes, images=images, colors=colors)
 
     if request.method == 'POST':
@@ -442,7 +448,104 @@ def individual():
 
 @app.route('/complaint', methods=["POST", "GET"])
 def complaint():
-      render_template('complaint.html')
+    if request.method == 'GET':
+        if 'username' in session:
+            account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': session['username']})
+            user_data = account.fetchone()
+            if user_data:
+                if user_data and user_data[6] == 'customer':
+                    buyer_id = user_data[0]
+                    orders = conn.execute(text('SELECT * FROM orders WHERE buyer_id = :buyer_id'), {'buyer_id': buyer_id}).fetchall()
+                    return render_template('complaint.html', orders=orders)
+                if user_data and user_data[6] == 'vendor':
+                    orders = conn.execute(text('SELECT * FROM complaint WHERE complaint_proccess = :pending'), {'pending': 'pending'}).fetchall()
+                    return render_template('complaint.html', orders=orders)
+                if user_data and user_data[6] == 'admin':
+                    buyer_id = user_data[0]
+                    orders = conn.execute(text('SELECT * FROM orders WHERE buyer_id = :buyer_id'), {'buyer_id': buyer_id}).fetchall()
+                    return render_template('complaint.html', orders=orders)
+                else:
+                    return "User data not found."  
+            else:
+                return "User not logged in." 
+
+    if request.method == 'POST':
+        if 'type' in session:
+            request_type = request.form.get('request')
+            words = request.form.get('words')
+            product_id = request.form.get('product_id')
+            if request_type and words and product_id:
+                account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
+                user_data = account.fetchone()
+                if user_data and user_data[6] == 'customer':
+                    conn.execute(text("INSERT INTO complaint (complaint, complaiter_id, date_issued, product_id) VALUES (:complaint, :complaiter_id, :date, :product_id)"), {'complaint': words, 'complaiter_id': user_data[0], 'date': date.today(), 'product_id': product_id})
+                    conn.commit()
+                elif user_data and user_data[6] == 'vendor':
+                    product_id = request.form['product_id']
+                    conn.execute(text("UPDATE complaint SET complaint_proccess = :complaint_process WHERE product_id = :product_id AND complaint_proccess = 'pending'"), {'complaint_process': 'confirmed', 'product_id': product_id})
+                    conn.commit()
+                    orders = conn.execute(text('SELECT * FROM complaint WHERE complaint_proccess = :pending'), {'pending': 'pending'}).fetchall()
+
+                    return render_template('complaint.html', orders=orders)
+
+                        # elif request_type == 'return':
+                        #     conn.execute(text("update returns (retuner_proccess) VALUES (:retuner_proccess)"), {'retuner_proccess': 'confirmed'})
+                        #     conn.commit()
+                else:
+                    return "User is not a customer."  
+            else:
+                return "Incomplete form data." 
+        else:
+            return "User type not found in session."  
+
+    return render_template('complaint.html')  
+
+
+@app.route('/order_page', methods=["GET", "POST"])
+def orders():
+    if request.method == 'GET':
+        if 'username' in session:
+            account = conn.execute(text("SELECT * FROM account WHERE username = :username OR email = :username"), {'username': session['username']})
+            user_data = account.fetchone()
+            if user_data:
+                buyer_id = user_data[0]
+                if user_data[6] == 'vendor':
+                    orders = conn.execute(text('SELECT * FROM orders')).fetchall()  # Fetch all orders for vendors
+                else:
+                    orders = conn.execute(text('SELECT * FROM orders WHERE buyer_id = :buyer_id'), {'buyer_id': buyer_id}).fetchall()  # Fetch orders for customers
+                return render_template('order_page.html', orders=orders)
+            else:
+                return "User data not found."
+        else:
+            return "User not logged in." 
+
+    if request.method == 'POST':
+        if 'type' in session:
+            request_type = request.form.get('request')
+            words = request.form.get('words')
+            product_id = request.form.get('product_id')
+            if request_type and words and product_id:
+                account = conn.execute(text("SELECT * FROM account WHERE type = :type"), {"type": session['type']})
+                user_data = account.fetchone()
+                if user_data and user_data[6] == 'vendor':
+                    # Vendor updates order process to 'confirmed'
+                    conn.execute(text("UPDATE orders SET order_process = :order_process WHERE product_id = :product_id"), {'order_process': 'confirmed', 'product_id': product_id})
+                    conn.commit()
+                    return redirect('/order_page')  # Redirect to order page after updating order process
+                elif user_data and user_data[6] == 'customer':
+                    # Handle other actions for customers, if needed
+                    pass
+                else:
+                    return "User is not a customer."  
+            else:
+                return "Incomplete form data." 
+        else:
+            return "User type not found in session."  
+
+    return render_template('order_page.html')
+
+
+
 
 
 if __name__ == '__main__':
