@@ -240,7 +240,7 @@ ul{
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>
-        <div class="formSection barItem"> <!-- Corrected class name -->
+        <div class="formSection barItem"> 
             <form class="barItem" action="/login" method="post">
                 <input type="text" name="username" value="" placeholder="username" required>
                 <input type="password" name="password" value="" placeholder="password" required>
@@ -260,7 +260,7 @@ ul{
                 <li><a href="/delete_product">Delete Products</a></li>
                 <li><a href="/show_product">All Products</a></li>
                 <li><a href="/complaint">  Returns/Complaints/ Warrantys</a></li>
-                <li><a href="/order_page"> Ship Items</a></li>
+                <li><a href="/order_page"> Ship Orders</a></li>
                 <li><a href="/chat"> Chat with Vendors</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
@@ -279,14 +279,14 @@ ul{
         {% elif session['type'] == 'vendor' %}
         <div class="topBar">
             <ul class="barItem">
-                <li><a href="/">Home</a></li>
+                <li><a href="/">Dashboard</a></li>
                 <li><a href="/create_products">Add Products</a></li>
                 <li><a href="/edit"> Edit Products </a></li>
                 <li><a href="/delete_product">Delete Products</a></li>
                 <li><a href="/show_product">All Products</a></li>
                 <li><a href="/complaint"> Reviews/ Returns and More</a></li>
                 <li><a href="/chat"> Chat with Admin</a></li>
-                <li><a href="/ship"> Proccesss Orders</a></li>
+                <li><a href="/order_page"> Proccesss Orders</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>
@@ -304,7 +304,7 @@ ul{
         {% elif session['type'] == 'customer' %}
         <div class="topBar">
             <ul class="barItem">
-                <li><a href="/">Home</a></li>
+                <li><a href="/">Dashboard</a></li>
                 <li><a href="/show_product">All Products</a></li>
                 <li><a href="/complaint"> Reviews/ Returns and More</a></li>
                 <li><a href="/order_page"> My Orders</a></li>
@@ -325,8 +325,8 @@ ul{
         {% else %}
         <div class="topBar">
             <ul class="barItem">
-                <li><a href="/">Home</a></li>
-                <li><a href="/show_product">show_product</a></li>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/create_acc">Create Acc</a></li>
                 <li><a href="/my_account"> My Account</a></li>
             </ul>
         </div>

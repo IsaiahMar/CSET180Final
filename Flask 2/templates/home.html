@@ -34,27 +34,22 @@
 
 
 {% if session['type'] == 'none' %}
-  <div class="dashboard">
-    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
-    <li><a href="/create_acc"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Create Account"> </a></li>
-    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
-  </div>
+ <h1>Login to see dashsboard!</h1>
 {% elif session['type'] == 'admin' %}
   <div class="dashboard">
     <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
     <li><a href="/create_products"><img src="https://cdn-icons-png.flaticon.com/512/7387/7387315.png" alt="Add Product"></a></li>
     <li><a href="/delete_product"> <img src="https://static.thenounproject.com/png/2858513-200.png" alt="Delete Products"> </a></li>
-    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/order_page"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
     <li><a href="/complaint"><img src="https://static.vecteezy.com/system/resources/thumbnails/007/817/914/small/warranty-guarantee-icon-award-badge-sign-symbol-vector.jpg" alt="Complaints"></a></li>
     <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
 {% elif session['type'] == 'vendor' %}
   <div class="dashboard">
     <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
-    <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
-    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
-    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
-    <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
+    <li><a href="/create_products"><img src="https://cdn-icons-png.flaticon.com/512/7387/7387315.png" alt="Add Product"></a></li>    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
+    <li><a href="/order_page"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/complaint"><img src="https://static.vecteezy.com/system/resources/thumbnails/007/817/914/small/warranty-guarantee-icon-award-badge-sign-symbol-vector.jpg" alt="Complaints"></a></li>
     <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
 {% elif session['type'] == 'customer' %}
@@ -62,19 +57,12 @@
     <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
     <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
     <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
-    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
+    <li><a href="/order_page"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
     <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
     <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
   </div>
 {% else %}
-  <div class="dashboard">
-    <li><a href="/"><img src="https://cdn2.iconfinder.com/data/icons/ui-kit-developer-glyphs/16/GlyphIcons-Home-512.png" alt="home page"></a></li>
-    <li><a href="/show_product"><img src="https://t4.ftcdn.net/jpg/02/10/25/55/360_F_210255553_Rf1KkSwW2Mt6wjnJTDISJqcW4SXdxKlF.jpg" alt="all products"></a></li>
-    <li><a href="/complaint"> <img src="https://cdn-icons-png.flaticon.com/512/2065/2065224.png" alt="Reviews/ Returns and More"> </a></li>
-    <li><a href="/order"><img src="https://static.thenounproject.com/png/101952-200.png" alt="orders"></a></li>
-    <li><a href="/shopping"><img src="https://cdn-icons-png.flaticon.com/512/1413/1413908.png" alt="Shopping cart"></a></li>
-    <li><a href="/my_account"><img src="https://static.thenounproject.com/png/3070444-200.png" alt="My Account Page"></a></li>
-  </div>
+ <h1>cannot display dashboard</h1>
 {% endif %}
 {% endblock body %}
 

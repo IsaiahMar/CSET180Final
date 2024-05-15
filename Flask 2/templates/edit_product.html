@@ -97,11 +97,13 @@
        <i ><li>Product ID: {{ i[0] }}</li></i> 
        <strong><li>Item Name: {{ i[1] }}</li></strong> 
         <li>Item Description: {{ i[2] }}</li>
+        <ul>
             {% for image in images %}
                 {% if image.product_id == i[0] %}
                 <li>Images: {{ image.image }}</li>
                 {% endif %}
             {% endfor %}
+          </ul>
         </li>
         <li>Warranty Period: {{ i[3] }}</li>
         <li>Category: {{ i[4] }}</li>

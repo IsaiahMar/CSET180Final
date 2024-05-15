@@ -11,7 +11,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 400px;
+
         }
         
         h1 {
@@ -92,14 +92,18 @@
 
 {% if session['type'] == 'customer' %}
     {% if orders %}
-        <div class="orders">
-            <h2>Orders</h2>
+        <div style="font-size: larger;" class="orders">
+            <h2 style="font-size: large;">Orders</h2>
             <ul>
                 {% for order in orders %}
                     <li>
-                        Product Title: {{ order[2] }} <br>
-                        Proccess : {{ order[4] }} <br>
-                        <!-- Add more product details here based on your database schema -->
+                       <strong> Product Title: {{ order[2] }}</strong> <br>
+                        Date Ordered: {{ order[3] }} <br>
+                        Order ID: {{ order[0] }} <br>
+                        Product ID: {{ order[1] }} <br>
+                        Buyer ID: {{ order[4] }} <br>
+                        Proccess : {{ order[5] }} <br>
+                        <hr style="width: 50%;">
                     </li>
                 {% endfor %}
             </ul>
@@ -107,19 +111,20 @@
     {% else %}
         <h1>No orders found</h1>
     {% endif %}
-{% elif session['type'] == 'vendor' %}
-    <title>Vendor Complaints/ Returns Page</title>
-    <h1>Welcome Vendor {{ session['username'] }}</h1>
-    <div class="body">
-        <form action="/complaint" method="POST">
-            <input type="text" name="product_id" placeholder="Accept this product_id " class="input_field"> <br>
-            <input type="text" name="request" placeholder="is it a 'complaint'/ 'return' / 'warranty_period'?" class="input_field"> <br>
-            <input type="text" name="words" placeholder="What would you like to say, EX: I accept this because..." class="input_field"> <br>
-            <input type="submit" value="Submit" class="input_submit">
-        </form>
-    </div>
 
+    {% elif session['type'] == 'vendor' %}
     {% if orders %}
+        <title>Vendor Complaints/ Returns Page</title>
+        <h1>Welcome Vendor {{ session['username'] }}</h1>
+        <div class="body">
+            <form action="/complaint" method="POST">
+                <input type="text" name="product_id" placeholder="Accept this product_id " class="input_field"> <br>
+                <input type="text" name="request" placeholder="is it a 'complaint'/ 'return' / 'warranty_period'?" class="input_field"> <br>
+                <input type="text" name="words" placeholder="What would you like to say, EX: I accept this because..." class="input_field"> <br>
+                <input type="submit" value="Submit" class="input_submit">
+            </form>
+        </div>
+
         <div class="orders">
             <h2>Pending Complaints</h2>
             <ul>
@@ -136,12 +141,12 @@
             </ul>
         </div>
     {% else %}
-        <h1>No orders found</h1>
+        <h1>There are no orders</h1>
     {% endif %}
-
 {% else %}
-    <h1>Must be a customer or vendor to view this page</h1>
+    <h1>There are no orders</h1>
 {% endif %}
+
 
 </body>
 {% endblock %}
